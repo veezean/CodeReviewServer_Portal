@@ -7,7 +7,6 @@ import SubSidebar from './components/SubSidebar/index.vue'
 import Topbar from './components/Topbar/index.vue'
 import Search from './components/Search/index.vue'
 import AppSetting from './components/AppSetting/index.vue'
-import HotkeysIntro from './components/HotkeysIntro/index.vue'
 import useSettingsStore from '@/store/modules/settings'
 import useKeepAliveStore from '@/store/modules/keepAlive'
 import useMenuStore from '@/store/modules/menu'
@@ -88,7 +87,6 @@ onUnmounted(() => {
     </div>
     <Search />
     <AppSetting />
-    <HotkeysIntro />
   </div>
 </template>
 

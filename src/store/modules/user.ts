@@ -10,6 +10,8 @@ const useUserStore = defineStore(
     const menuStore = useMenuStore()
 
     const account = ref(localStorage.account ?? '')
+    const name = ref(localStorage.name ?? '')
+    const phoneNumber = ref(localStorage.phoneNumber ?? '')
     const token = ref(localStorage.token ?? '')
     const failure_time = ref(localStorage.failure_time ?? '')
     const permissions = ref<string[]>([])
@@ -31,10 +33,14 @@ const useUserStore = defineStore(
       const res = await api.post('server/login/doLogin', data)
       if (res.code === 0) {
         localStorage.setItem('account', res.data.userDetail.account)
+        localStorage.setItem('name', res.data.userDetail.name)
+        localStorage.setItem('phoneNumber', res.data.userDetail.phoneNumber)
         localStorage.setItem('token', res.data.token)
         localStorage.setItem('failure_time', res.data.expireAt)
 
         account.value = res.data.userDetail.account
+        name.value = res.data.userDetail.name
+        phoneNumber.value = res.data.userDetail.phoneNumber
         token.value = res.data.token
         failure_time.value = res.data.expireAt
       }
@@ -44,9 +50,13 @@ const useUserStore = defineStore(
       const res = await api.get('server/login/doLogout')
       if (res.code === 0) {
         localStorage.removeItem('account')
+        localStorage.removeItem('name')
+        localStorage.removeItem('phoneNumber')
         localStorage.removeItem('token')
         localStorage.removeItem('failure_time')
         account.value = ''
+        name.value = ''
+        phoneNumber.value = ''
         token.value = ''
         failure_time.value = ''
         routeStore.removeRoutes()
@@ -73,17 +83,29 @@ const useUserStore = defineStore(
       password: string
       newpassword: string
     }) {
-      await api.post('member/edit/password', {
-        account: account.value,
-        password: data.password,
-        newpassword: data.newpassword,
-      }, {
-        baseURL: '/mock/',
+      await api.post('server/user/changePwd', {
+        originalPwd: data.password,
+        newPwd: data.newpassword,
       })
+    }
+    // 修改基本信息
+    async function editBaseInfo(data: {
+      name: string
+      phoneNumber: string
+    }) {
+      const resp = await api.post('server/user/editBaseInfo', data)
+      if (resp.code === 0) {
+        localStorage.setItem('name', data.name)
+        localStorage.setItem('phoneNumber', data.phoneNumber)
+        name.value = data.name
+        phoneNumber.value = data.phoneNumber
+      }
     }
 
     return {
       account,
+      name,
+      phoneNumber,
       token,
       permissions,
       isLogin,
@@ -91,6 +113,7 @@ const useUserStore = defineStore(
       logout,
       getPermissions,
       editPassword,
+      editBaseInfo,
     }
   },
 )

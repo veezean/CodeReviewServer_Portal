@@ -75,7 +75,7 @@ function userCommand(command: 'home' | 'setting' | 'hotkeys' | 'logout') {
             <svg-icon name="ep:user-filled" />
           </el-icon>
         </el-avatar>
-        {{ userStore.account }}
+        {{ userStore.name }}
         <el-icon>
           <svg-icon name="ep:caret-bottom" />
         </el-icon>
@@ -87,9 +87,6 @@ function userCommand(command: 'home' | 'setting' | 'hotkeys' | 'logout') {
           </el-dropdown-item>
           <el-dropdown-item command="setting">
             个人设置
-          </el-dropdown-item>
-          <el-dropdown-item v-if="settingsStore.mode === 'pc'" divided command="hotkeys">
-            快捷键介绍
           </el-dropdown-item>
           <el-dropdown-item divided command="logout">
             退出登录

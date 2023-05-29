@@ -51,33 +51,35 @@ const oneStepAdminInfo = ref({
 
 <template>
   <div>
-    <page-header title="欢迎使用 Fantastic-admin（基础版）">
+    <page-header title="欢迎使用CodeReview管理系统">
       <template #content>
         <div>
           <div style="margin-bottom: 5px;">
-            这是一款<b class="text-emphasis">开箱即用</b>的中后台框架，同时它也经历过数十个真实项目的技术沉淀，确保框架在开发中可落地、可使用、可维护
+            这是IDEA插件<b class="text-emphasis">CodeReviewHelper</b>配套的服务端管理系统，它可以用于团队协作时的代码检视场景。支持管理检视意见、检视意见确认、数据统计、用户管理、系统配置等功能。
           </div>
-          <div>注：在作者就职的公司，本框架已在电商、直播、OA、ERP等多个不同领域的中后台系统中应用并稳定运行</div>
         </div>
       </template>
       <el-button-group>
-        <el-button type="success" size="large" plain @click="open('https://hooray.gitee.io/fantastic-admin/')">
-          开发文档
+        <el-button type="success" size="large" plain @click="open('http://blog.codingcoder.cn/post/codereviewserverdeploydoc.html')">
+          帮助文档
         </el-button>
         <el-dropdown>
           <el-button type="primary" size="large">
-            代码仓库
+            源码获取
             <el-icon class="el-icon--right">
               <svg-icon name="ep:arrow-down" />
             </el-icon>
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="open('https://gitee.com/hooray/fantastic-admin')">
-                Gitee
+              <el-dropdown-item @click="open('https://github.com/veezean/IntellijIDEA-CodeReview-Plugin')">
+                IDEA插件
               </el-dropdown-item>
-              <el-dropdown-item @click="open('https://github.com/hooray/fantastic-admin')">
-                Github
+              <el-dropdown-item @click="open('https://github.com/veezean/CodeReviewServer')">
+                Server后端
+              </el-dropdown-item>
+              <el-dropdown-item @click="open('https://github.com/veezean/CodeReviewServer_Portal')">
+                Server前端
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -193,28 +195,6 @@ const oneStepAdminInfo = ref({
         </page-main>
       </el-col>
     </el-row>
-    <page-main title="应用场景">
-      <div class="question">
-        <ol class="answer">
-          <li><span>没有前端开发人员的小型公司。</span>据了解，有些小型公司没有前端开发人员，而这些公司在开发中后台系统的时候，直接要求后端开发人员来进行开发工作。所以借助 Vue 的易学习易上手特性，再加上本框架的加持，可以让后端开发人员能在短时间内转型成为全栈开发。</li>
-          <li><span>前端开发人员不足的中小型公司。</span>根据招聘网站统计，几乎所有公司都缺前端，其中有很大一部分中小型公司标配只有1-2名前端开发人员，而这些公司在开发中后台系统的时候，如果能有一套现成的中后台框架系统，不仅能提高项目开发效率，同时还大大减轻前端开发人员工作压力。</li>
-          <li><span>项目型公司。</span>特点为项目多，周期短，甲方对页面布局和主题风格有绝对话语权，而通过专业版提供的布局和主题风格，可应对绝大部分甲方需求，并且可自定义扩展主题风格的样式，实现高度定制化。</li>
-          <li><span>产品型公司。</span>产品型公司最担心的就是产品开发中代码不可控的因素，本框架除了提供完善的开发文档和代码注释外，作者还提供一对一的技术支持，确保开发人员尽可能理解整套框架源码的方方面面，为产品保驾护航。</li>
-          <li><span>个人开发者。</span>手里有一套可高度定制化的中后台框架，什么项目都不用担心啦~</li>
-        </ol>
-      </div>
-    </page-main>
-    <page-main title="优势">
-      <div class="question">
-        <ol class="answer">
-          <li><span>作者拥有10年+的前后端开发经验。</span>部分框架的作者由于缺少后端开发经验，可能会在设计框架的时候，很少或者没有考虑后端的实现逻辑，导致框架在实际使用中，业务场景无法落地，开发人员得通过修改源码自行实现业务。</li>
-          <li><span>经历过数十个真实项目的打磨。</span>没用在真实业务场景中使用过的框架都是纸飞机，哪怕它提供的演示功能特别华丽。而本框架在作者就职的公司，已经稳定应用在电商、直播、OA、CRM、ERP等多个不同领域的中后台系统中。</li>
-          <li><span>丰富的组件库。</span>除了支持 ElementUI / Element Plus 自带的组件外，框架还扩充了部分业务组件，以及第三方插件。借助以往的项目经验，提供最佳实践方案，方便开发人员直接使用。</li>
-          <li><span>持续更新的业务应用静态页面。</span>通过项目积累，沉淀出数十个业务应用的静态页面，做到开发人员拿来即可使用，极大提升开发效率的同时，还省去了产品和设计人员的工作。</li>
-          <li><span>长期维护。</span>无论是免费的基础版，还是付费的专业版，均提供长期维护。区别在于基础版侧重于稳定性维护，主要在修复 bug ，不定期增加新特性；专业版侧重于新特性开发，在确保稳定的基础上，会长期深挖中后台系统框架，持续产出可落地的特性或开发规范。</li>
-        </ol>
-      </div>
-    </page-main>
   </div>
 </template>
 

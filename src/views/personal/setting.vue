@@ -6,30 +6,30 @@ meta:
 </route>
 
 <script lang="ts" setup name="PersonalSetting">
-import type { UploadProps } from 'element-plus'
 import { ElMessage } from 'element-plus'
+import useUserStore from '@/store/modules/user'
 
 const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
 
 const form = ref({
-  headimg: '',
-  mobile: '',
-  name: '',
-  qq: '',
-  wechat: '',
+  name: userStore.name,
+  phoneNumber: userStore.phoneNumber,
 })
 
-const handleSuccess: UploadProps['onSuccess'] = (res) => {
-  if (res.error === '') {
-    form.value.headimg = res.data.path
-  }
-  else {
-    ElMessage.warning(res.error)
-  }
-}
 const editPassword = () => {
   router.push({
     name: 'personalEditPassword',
+  })
+}
+
+const updateUserInfo = () => {
+  userStore.editBaseInfo(form.value).then(() => {
+    ElMessage({
+      type: 'success',
+      message: '基本信息修改成功',
+    })
   })
 }
 </script>
@@ -42,28 +42,19 @@ const editPassword = () => {
           <h2>基本设置</h2>
           <el-row :gutter="20">
             <el-col :span="16">
-              <el-form ref="formRef" :model="form" label-width="120px" label-suffix="：">
+              <el-form ref="formRef" :model="form" label-width="120px">
                 <el-form-item label="名 称">
                   <el-input v-model="form.name" placeholder="请输入你的名称" />
                 </el-form-item>
                 <el-form-item label="手机号">
-                  <el-input v-model="form.mobile" placeholder="请输入你的手机号" />
-                </el-form-item>
-                <el-form-item label="QQ 号">
-                  <el-input v-model="form.qq" placeholder="请输入你的 QQ 号" />
-                </el-form-item>
-                <el-form-item label="微信号">
-                  <el-input v-model="form.wechat" placeholder="请输入你的微信号" />
+                  <el-input v-model="form.phoneNumber" placeholder="请输入你的手机号" />
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary">
+                  <el-button type="primary" @click="updateUserInfo">
                     保存
                   </el-button>
                 </el-form-item>
               </el-form>
-            </el-col>
-            <el-col :span="8">
-              <image-upload v-model:url="form.headimg" action="http://scrm.1daas.com/api/upload/upload" name="image" :data="{ token: 'TKD628431923530324' }" notip class="headimg-upload" @on-success="handleSuccess" />
             </el-col>
           </el-row>
         </el-tab-pane>
@@ -75,43 +66,10 @@ const editPassword = () => {
                 <div class="title">
                   账户密码
                 </div>
-                <div class="desc">
-                  当前密码强度：强
-                </div>
               </div>
               <div class="action">
                 <el-button type="primary" text @click="editPassword">
                   修改
-                </el-button>
-              </div>
-            </div>
-            <div class="item">
-              <div class="content">
-                <div class="title">
-                  密保手机
-                </div>
-                <div class="desc">
-                  已绑定手机：187****3441
-                </div>
-              </div>
-              <div class="action">
-                <el-button type="primary" text>
-                  修改
-                </el-button>
-              </div>
-            </div>
-            <div class="item">
-              <div class="content">
-                <div class="title">
-                  备用邮箱
-                </div>
-                <div class="desc">
-                  当前未绑定备用邮箱
-                </div>
-              </div>
-              <div class="action">
-                <el-button type="primary" text>
-                  绑定
                 </el-button>
               </div>
             </div>

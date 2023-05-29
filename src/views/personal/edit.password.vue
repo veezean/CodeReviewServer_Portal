@@ -50,7 +50,7 @@ function onSubmit() {
       userStore.editPassword(form.value).then(() => {
         ElMessage({
           type: 'success',
-          message: '模拟修改成功，请重新登录',
+          message: '密码修改成功，请重新登录',
         })
         userStore.logout().then(() => {
           router.push({
