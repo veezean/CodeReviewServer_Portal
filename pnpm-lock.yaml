@@ -24,6 +24,7 @@ specifiers:
   fs-extra: ^11.1.0
   hotkeys-js: ^3.10.1
   http-server: ^14.1.1
+  js-md5: ^0.7.3
   lint-staged: ^13.2.0
   lodash-es: ^4.17.21
   mitt: ^3.0.0
@@ -73,6 +74,7 @@ dependencies:
   element-plus: 2.2.36_vue@3.2.47
   eruda: 2.11.3
   hotkeys-js: 3.10.1
+  js-md5: 0.7.3
   lodash-es: 4.17.21
   mitt: 3.0.0
   mockjs: 1.1.0
@@ -5228,6 +5230,10 @@ packages:
   /js-base64/2.6.4:
     resolution: {integrity: sha512-pZe//GGmwJndub7ZghVHz7vjb2LgC1m8B07Au3eYqeqv9emhESByMXxaEgkUkEqJe87oBbSniGYoQNIBklc7IQ==}
     dev: true
+
+  /js-md5/0.7.3:
+    resolution: {integrity: sha512-ZC41vPSTLKGwIRjqDh8DfXoCrdQIyBgspJVPXHBGu4nZlAEvG3nf+jO9avM9RmLiGakg7vz974ms99nEV0tmTQ==}
+    dev: false
 
   /js-sdsl/4.3.0:
     resolution: {integrity: sha512-mifzlm2+5nZ+lEcLJMoBK0/IH/bDg8XnJfd/Wq6IP+xoCjLZsTOnV2QpxlVbX9bMnkl5PdEjNtBJ9Cj1NjifhQ==}

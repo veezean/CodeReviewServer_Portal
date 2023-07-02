@@ -20,6 +20,8 @@ export default {
       dictItemList: [],
       selectedRows: [],
       editDetail: { },
+      jsonContent: '',
+      showJsonDialog: false,
       editFieldRules: {
         columnCode: [{ required: true, message: '字段编码必填，代码层面处理使用，请输入英文字符和数字', trigger: 'blur' }],
         showName: [{ required: true, message: '字段显示名称必填', trigger: 'blur' }],
@@ -164,6 +166,8 @@ export default {
       this.editDetail = {
         sortIndex: 1,
         excelColumnWidth: 50,
+        webTableColumnWidth: 200,
+        systemInitialization: false,
       }
       this.editColumnId = 0
       this.showEditDialog = true
@@ -188,6 +192,16 @@ export default {
     bindDictCollection(collCode) {
       this.editDetail.dictCollectionCode = collCode
       this.showSelectDictCollectionDialog = false
+    },
+
+    showInJson() {
+      api.get('server/column/getJsonContent').then((res) => {
+        this.jsonContent = res.data
+      })
+      this.showJsonDialog = true
+    },
+    closeJsonDialog() {
+      this.showJsonDialog = false
     },
   },
 
@@ -215,6 +229,15 @@ export default {
             </el-icon>
           </template>
           删除所选
+        </el-button>
+
+        <el-button type="text" @click="showInJson">
+          <template #icon>
+            <el-icon>
+              <svg-icon name="ep:delete" />
+            </el-icon>
+          </template>
+          显示JSON内容
         </el-button>
       </div>
 
@@ -270,93 +293,121 @@ export default {
             </p>
           </template>
         </el-table-column>
-
-        <el-table-column prop="showInTable" label="表格中显示" width="100" align="center">
+        <el-table-column prop="showInIdeaTable" label="IDEA表格中显示" width="150" align="center">
           <template #default="scope">
-            <p v-if="scope.row.showInTable === true">
+            <p v-if="scope.row.showInIdeaTable === true">
               <el-icon>
                 <svg-icon name="table-support" />
               </el-icon>
             </p>
-            <p v-if="scope.row.showInTable === false">
+            <p v-if="scope.row.showInIdeaTable === false">
               <el-icon>
                 <svg-icon name="table-not-support" />
               </el-icon>
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="showInAddPage" label="新增界面显示" width="110" align="center">
+        <el-table-column prop="showInWebTable" label="Web端表格中显示" width="150" align="center">
+          <template #default="scope">
+            <p v-if="scope.row.showInWebTable === true">
+              <el-icon>
+                <svg-icon name="table-support" />
+              </el-icon>
+              <el-tag class="tag-style">
+                显示列宽：{{ scope.row.webTableColumnWidth }}
+              </el-tag>
+            </p>
+            <p v-if="scope.row.showInWebTable === false">
+              <el-icon>
+                <svg-icon name="table-not-support" />
+              </el-icon>
+            </p>
+          </template>
+        </el-table-column>
+        <el-table-column prop="showInAddPage" label="新增界面" width="110" align="center">
           <template #default="scope">
             <p v-if="scope.row.showInAddPage === true">
               <el-icon>
                 <svg-icon name="table-support" />
               </el-icon>
+              显示
             </p>
             <p v-if="scope.row.showInAddPage === false">
               <el-icon>
                 <svg-icon name="table-not-support" />
               </el-icon>
+              显示
             </p>
-          </template>
-        </el-table-column>
-        <el-table-column prop="showInComfirmPage" label="确认界面显示" width="110" align="center">
-          <template #default="scope">
-            <p v-if="scope.row.showInComfirmPage === true">
+            <p v-if="scope.row.editableInAddPage === true">
               <el-icon>
                 <svg-icon name="table-support" />
               </el-icon>
+              编辑
             </p>
-            <p v-if="scope.row.showInComfirmPage === false">
+            <p v-if="scope.row.editableInAddPage === false">
               <el-icon>
                 <svg-icon name="table-not-support" />
               </el-icon>
+              编辑
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="editable" label="可编辑" width="70" align="center">
+        <el-table-column prop="showInEditPage" label="编辑界面" width="110" align="center">
           <template #default="scope">
-            <p v-if="scope.row.editable === true">
+            <p v-if="scope.row.showInEditPage === true">
               <el-icon>
                 <svg-icon name="table-support" />
               </el-icon>
+              显示
             </p>
-            <p v-if="scope.row.editable === false">
+            <p v-if="scope.row.showInEditPage === false">
               <el-icon>
                 <svg-icon name="table-not-support" />
               </el-icon>
+              显示
+            </p>
+            <p v-if="scope.row.editableInEditPage === true">
+              <el-icon>
+                <svg-icon name="table-support" />
+              </el-icon>
+              编辑
+            </p>
+            <p v-if="scope.row.editableInEditPage === false">
+              <el-icon>
+                <svg-icon name="table-not-support" />
+              </el-icon>
+              编辑
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="editableInConfirmPage" label="确认时可修改" width="110" align="center">
+        <el-table-column prop="showInConfirmPage" label="确认界面" width="110" align="center">
           <template #default="scope">
+            <p v-if="scope.row.showInConfirmPage === true">
+              <el-icon>
+                <svg-icon name="table-support" />
+              </el-icon>
+              显示
+            </p>
+            <p v-if="scope.row.showInConfirmPage === false">
+              <el-icon>
+                <svg-icon name="table-not-support" />
+              </el-icon>
+              显示
+            </p>
             <p v-if="scope.row.editableInConfirmPage === true">
               <el-icon>
                 <svg-icon name="table-support" />
               </el-icon>
+              编辑
             </p>
             <p v-if="scope.row.editableInConfirmPage === false">
               <el-icon>
                 <svg-icon name="table-not-support" />
               </el-icon>
+              编辑
             </p>
           </template>
         </el-table-column>
-
-        <el-table-column prop="confirmProp" label="仅确认界面显示" width="130" align="center">
-          <template #default="scope">
-            <p v-if="scope.row.confirmProp === true">
-              <el-icon>
-                <svg-icon name="table-support" />
-              </el-icon>
-            </p>
-            <p v-if="scope.row.confirmProp === false">
-              <el-icon>
-                <svg-icon name="table-not-support" />
-              </el-icon>
-            </p>
-          </template>
-        </el-table-column>
-
         <el-table-column prop="supportInExcel" label="支持导出到表格" width="140" align="center">
           <template #default="scope">
             <p v-if="scope.row.supportInExcel === true">
@@ -393,7 +444,10 @@ export default {
       <el-form ref="editDetailForm" :model="editDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="12">
           <el-form-item label="字段编码" prop="columnCode" :rules="editFieldRules.columnCode">
-            <el-input v-model="editDetail.columnCode" placeholder="输入字段编码" maxlength="64" show-word-limit />
+            <el-input v-model="editDetail.columnCode" placeholder="输入字段编码" maxlength="64" show-word-limit :disabled="editDetail.systemInitialization" />
+            <el-aside v-if="editDetail.systemInitialization" style="color: red;">
+              系统预置字段不允许修改字段编码值
+            </el-aside>
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -409,7 +463,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="系统预置">
-            <el-radio-group v-model="editDetail.systemInitialization">
+            <el-radio-group v-model="editDetail.systemInitialization" readonly="true" disabled>
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -465,8 +519,8 @@ export default {
           </el-form-item>
         </el-col>
         <el-col :span="18">
-          <el-form-item label="表格中显示">
-            <el-radio-group v-model="editDetail.showInTable">
+          <el-form-item label="IDEA表格中显示">
+            <el-radio-group v-model="editDetail.showInIdeaTable">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -474,6 +528,21 @@ export default {
                 否
               </el-radio>
             </el-radio-group>
+          </el-form-item>
+          <el-form-item label="Web表格中显示">
+            <el-radio-group v-model="editDetail.showInWebTable">
+              <el-radio :label="true" size="large">
+                是
+              </el-radio>
+              <el-radio :label="false" size="large">
+                否
+              </el-radio>
+            </el-radio-group>
+            <div v-if="editDetail.showInWebTable === true" class="select-collection-button">
+              <el-form-item label="Web表格占用宽度" label-width="200">
+                <el-input v-model="editDetail.webTableColumnWidth" type="number" />
+              </el-form-item>
+            </div>
           </el-form-item>
         </el-col>
         <el-col :span="18">
@@ -489,8 +558,44 @@ export default {
           </el-form-item>
         </el-col>
         <el-col :span="18">
+          <el-form-item label="新增界面可编辑">
+            <el-radio-group v-model="editDetail.editableInAddPage">
+              <el-radio :label="true" size="large">
+                是
+              </el-radio>
+              <el-radio :label="false" size="large">
+                否
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="18">
+          <el-form-item label="编辑界面显示">
+            <el-radio-group v-model="editDetail.showInEditPage">
+              <el-radio :label="true" size="large">
+                是
+              </el-radio>
+              <el-radio :label="false" size="large">
+                否
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="18">
+          <el-form-item label="编辑界面可编辑">
+            <el-radio-group v-model="editDetail.editableInEditPage">
+              <el-radio :label="true" size="large">
+                是
+              </el-radio>
+              <el-radio :label="false" size="large">
+                否
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="18">
           <el-form-item label="确认界面显示">
-            <el-radio-group v-model="editDetail.showInComfirmPage">
+            <el-radio-group v-model="editDetail.showInConfirmPage">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -501,32 +606,8 @@ export default {
           </el-form-item>
         </el-col>
         <el-col :span="18">
-          <el-form-item label="字段支持编辑">
-            <el-radio-group v-model="editDetail.editable">
-              <el-radio :label="true" size="large">
-                是
-              </el-radio>
-              <el-radio :label="false" size="large">
-                否
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="18">
-          <el-form-item label="确认时可编辑">
+          <el-form-item label="确认界面可编辑">
             <el-radio-group v-model="editDetail.editableInConfirmPage">
-              <el-radio :label="true" size="large">
-                是
-              </el-radio>
-              <el-radio :label="false" size="large">
-                否
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="18">
-          <el-form-item label="仅确认界面显示">
-            <el-radio-group v-model="editDetail.confirmProp">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -576,7 +657,7 @@ export default {
             <el-button link type="primary" size="small" @click="bindDictCollection(scope.row.code)">
               绑定
             </el-button>
-            <el-button link type="primary" size="small" @click="showDictCollectionItems(scope.row.code)">
+            <el-button link type="primary" size="small" :disabled="scope.row.type === 1" @click="showDictCollectionItems(scope.row.code)">
               字典值查看
             </el-button>
           </template>
@@ -586,10 +667,22 @@ export default {
 
     <el-dialog v-model="showDictItemsDialog" title="字典值列表查看">
       <el-table border highlight-current-row :data="dictItemList" height="100%">
-        <el-table-column fixed prop="itemKey" label="KEY" width="150" />
-        <el-table-column fixed prop="itemValue" label="VALUE" width="200" />
-        <el-table-column prop="itemDesc" label="描述说明" />
+        <el-table-column fixed prop="value" label="值" width="200" />
+        <el-table-column fixed prop="showName" label="显示名称" width="200" />
+        <el-table-column fixed prop="itemDesc" label="含义描述" width="300" />
       </el-table>
+    </el-dialog>
+
+    <el-dialog v-model="showJsonDialog" title="字段配置JSON格式查看">
+      <el-input v-model="jsonContent" readonly type="textarea" :rows="30" />
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="closeJsonDialog">
+            关闭
+          </el-button>
+        </span>
+      </template>
     </el-dialog>
   </div>
 </template>

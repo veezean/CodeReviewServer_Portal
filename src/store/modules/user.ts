@@ -1,3 +1,4 @@
+import md5 from 'js-md5'
 import useRouteStore from './route'
 import useMenuStore from './menu'
 import api from '@/api'
@@ -30,7 +31,10 @@ const useUserStore = defineStore(
       account: string
       password: string
     }) {
-      const res = await api.post('server/login/doLogin', data)
+      const res = await api.post('server/login/doLogin', {
+        account: data.account,
+        password: md5(data.password),
+      })
       if (res.code === 0) {
         localStorage.setItem('account', res.data.userDetail.account)
         localStorage.setItem('name', res.data.userDetail.name)
@@ -84,8 +88,8 @@ const useUserStore = defineStore(
       newpassword: string
     }) {
       await api.post('server/user/changePwd', {
-        originalPwd: data.password,
-        newPwd: data.newpassword,
+        originalPwd: md5(data.password),
+        newPwd: md5(data.newpassword),
       })
     }
     // 修改基本信息

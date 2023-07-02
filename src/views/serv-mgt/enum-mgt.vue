@@ -11,23 +11,22 @@ export default {
   data() {
     return {
       showEditDialog: false,
-      showCreateDialog: false,
       showManageDialog: false,
       batchBtnEnable: false,
       dataList: [],
       itemList: [],
+      dialogType: '',
       manageCollectionCode: 0,
       editItemDetail: { },
       showEditItemDialog: false,
-      showCreateItemDialog: false,
+      itemDialogType: '',
       selectedRows: [],
       editDetail: { },
-      createDetail: {},
       editFieldRules: {
         code: [{ required: true, message: '字典集编码必填', trigger: 'blur' }],
         name: [{ required: true, message: '字典集名称必填', trigger: 'blur' }],
-        itemKey: [{ required: true, message: '字典值Key必填', trigger: 'blur' }],
-        itemValue: [{ required: true, message: '字典值Value必填', trigger: 'blur' }],
+        value: [{ required: true, message: '字典值value必填', trigger: 'blur' }],
+        showName: [{ required: true, message: '字典值showName必填', trigger: 'blur' }],
       },
     }
   },
@@ -129,7 +128,9 @@ export default {
           name: resp.data.name,
           dictDesc: resp.data.dictDesc,
           id: resp.data.id,
+          type: resp.data.type,
         }
+        this.dialogType = 'EDIT'
         this.showEditDialog = true
       }).catch(() => {
         ElMessage({
@@ -147,7 +148,11 @@ export default {
           })
         }
         else {
-          api.post('server/dict/modifyDictCollection', this.editDetail).then((resp) => {
+          let reqUrl = 'server/dict/modifyDictCollection'
+          if (this.dialogType === 'CREATE') {
+            reqUrl = 'server/dict/createDictCollection'
+          }
+          api.post(reqUrl, this.editDetail).then((resp) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -170,43 +175,17 @@ export default {
       this.showEditDialog = false
     },
     create() {
-      this.createDetail = {
+      this.editDetail = {
         name: '',
         code: '',
         dictDesc: '',
+        type: 0,
       }
-      this.showCreateDialog = true
+      this.dialogType = 'CREATE'
+      this.showEditDialog = true
     },
     cancelCreateOperation() {
-      this.showCreateDialog = false
-    },
-    saveCreateOperation() {
-      this.$refs.createDetailForm.validate((valid) => {
-        if (!valid) {
-          ElMessage({
-            type: 'error',
-            message: '参数内容填写有误，请检查',
-          })
-        }
-        else {
-          api.post('server/dict/createDictCollection', this.createDetail).then((resp) => {
-            if (resp.code === 0) {
-              ElMessage({
-                type: 'success',
-                message: '保存成功',
-              })
-              this.showCreateDialog = false
-              this.clickSearch()
-            }
-            else {
-              ElMessage({
-                type: 'error',
-                message: `保存失败：${resp.message}`,
-              })
-            }
-          })
-        }
-      })
+      this.showEditDialog = false
     },
 
     loadItemList() {
@@ -252,18 +231,7 @@ export default {
 
         })
     },
-    editSingleItem(val) {
-      api.get(`server/dict/queryDictItem?itemId=${val.id}`).then((resp) => {
-        this.editItemDetail = resp.data
-        this.editItemDetail.collectionCode = this.manageCollectionCode
-        this.showEditItemDialog = true
-      }).catch(() => {
-        ElMessage({
-          type: 'error',
-          message: `编辑失败：${resp.message}`,
-        })
-      })
-    },
+
     saveEditItemOperation() {
       this.$refs.editItemDetailForm.validate((valid) => {
         if (!valid) {
@@ -292,51 +260,32 @@ export default {
         }
       })
     },
-    cancelEditItemOperation() {
-      this.showEditItemDialog = false
-    },
     createItem() {
       this.editItemDetail = {
-        itemKey: '',
-        itemValue: '',
+        value: '',
+        showName: '',
         itemDesc: '',
         sort: 0,
         collectionCode: this.manageCollectionCode,
       }
-      this.showCreateItemDialog = true
+      this.itemDialogType = 'CREATE'
+      this.showEditItemDialog = true
     },
-    cancelCreateItemOperation() {
-      this.showCreateItemDialog = false
-    },
-    saveCreateItemOperation() {
-      this.$refs.createItemDetailForm.validate((valid) => {
-        if (!valid) {
-          ElMessage({
-            type: 'error',
-            message: '参数内容填写有误，请检查',
-          })
-        }
-        else {
-          api.post('server/dict/createOrModifyDictItem', this.editItemDetail).then((resp) => {
-            if (resp.code === 0) {
-              ElMessage({
-                type: 'success',
-                message: '保存成功',
-              })
-              this.showCreateItemDialog = false
-              this.loadItemList()
-            }
-            else {
-              ElMessage({
-                type: 'error',
-                message: `保存失败：${resp.message}`,
-              })
-            }
-          })
-        }
+    editSingleItem(val) {
+      api.get(`server/dict/queryDictItem?itemId=${val.id}`).then((resp) => {
+        this.editItemDetail = resp.data
+        this.itemDialogType = 'EDIT'
+        this.showEditItemDialog = true
+      }).catch(() => {
+        ElMessage({
+          type: 'error',
+          message: `编辑失败：${resp.message}`,
+        })
       })
     },
-
+    cancelEditItemOperation() {
+      this.showEditItemDialog = false
+    },
   },
 
 }
@@ -371,13 +320,28 @@ export default {
         <el-table-column fixed prop="id" label="ID" width="200" />
         <el-table-column fixed prop="code" label="字典集编码" width="200" />
         <el-table-column prop="name" label="字典集名称" width="360" />
+        <el-table-column prop="type" label="字典集类型" width="200">
+          <template #default="scope">
+            <p v-if="scope.row.type === 0">
+              手动配置枚举项
+            </p>
+            <p v-else-if="scope.row.type === 1">
+              系统预置动态列表
+            </p>
+            <p v-else>
+              <el-icon>
+                <svg-icon name="table-not-support" />
+              </el-icon>
+            </p>
+          </template>
+        </el-table-column>
         <el-table-column prop="dictDesc" label="描述说明" />
         <el-table-column fixed="right" label="操作" width="200">
           <template #default="scope">
             <el-button link type="primary" size="small" @click="editSingle(scope.row)">
               编辑
             </el-button>
-            <el-button link type="primary" size="small" @click="itemManage(scope.row)">
+            <el-button link type="primary" size="small" :disabled="scope.row.type === 1" @click="itemManage(scope.row)">
               字典值管理
             </el-button>
             <el-button link type="danger" size="small" @click="deleteSingle(scope.row)">
@@ -388,16 +352,28 @@ export default {
       </el-table>
     </page-main>
 
-    <el-dialog v-model="showEditDialog" title="编辑字典集信息">
+    <el-dialog v-model="showEditDialog" :title="dialogType === 'CREATE' ? '创建字典集' : '编辑字典集' ">
       <el-form ref="editDetailForm" :model="editDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="18">
-          <el-form-item label="字典集编码">
-            <el-input v-model="editDetail.code" readonly="true" disabled />
+          <el-form-item label="字典集编码" prop="code" :rules="editFieldRules.code">
+            <el-input v-model="editDetail.code" :disabled="dialogType === 'EDIT'" placeholder="输入字典集编码,允许英文和数字" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="字典集名称" prop="name" :rules="editFieldRules.name">
             <el-input v-model="editDetail.name" placeholder="输入字典集名称" maxlength="64" show-word-limit />
+          </el-form-item>
+        </el-col>
+        <el-col :span="18">
+          <el-form-item label="字典集类型" prop="type">
+            <el-radio-group v-model="editDetail.type">
+              <el-radio :label="0" size="large">
+                手动配置枚举项
+              </el-radio>
+              <el-radio :label="1" size="large">
+                系统预置动态列表
+              </el-radio>
+            </el-radio-group>
           </el-form-item>
         </el-col>
         <el-col :span="18">
@@ -412,36 +388,6 @@ export default {
             取消
           </el-button>
           <el-button type="primary" @click="saveEditOperation">
-            保存
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
-
-    <el-dialog v-model="showCreateDialog" title="创建字典集">
-      <el-form ref="createDetailForm" :model="createDetail" size="default" label-width="120px" :rules="editFieldRules">
-        <el-col :span="18">
-          <el-form-item label="字典集编码" prop="code" :rules="editFieldRules.code">
-            <el-input v-model="createDetail.code" placeholder="输入字典集编码,允许英文和数字" maxlength="64" show-word-limit />
-          </el-form-item>
-        </el-col>
-        <el-col :span="18">
-          <el-form-item label="字典集名称" prop="name" :rules="editFieldRules.name">
-            <el-input v-model="createDetail.name" placeholder="输入字典集名称" maxlength="64" show-word-limit />
-          </el-form-item>
-        </el-col>
-        <el-col :span="18">
-          <el-form-item label="字典集描述">
-            <el-input v-model="createDetail.dictDesc" type="textarea" :rows="3" placeholder="输入简要描述信息" clearable maxlength="256" show-word-limit />
-          </el-form-item>
-        </el-col>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="cancelCreateOperation">
-            取消
-          </el-button>
-          <el-button type="primary" @click="saveCreateOperation">
             保存
           </el-button>
         </span>
@@ -463,12 +409,10 @@ export default {
           </div>
 
           <el-table border highlight-current-row :data="itemList" @selection-change="getSelectedRows">
-            <el-table-column type="selection" width="55" />
-            <el-table-column fixed prop="id" label="ID" width="80" />
-            <el-table-column fixed prop="itemKey" label="KEY" width="150" />
-            <el-table-column fixed prop="itemValue" label="VALUE" width="200" />
+            <el-table-column fixed prop="value" label="值" width="150" />
+            <el-table-column fixed prop="showName" label="显示名称" width="200" />
             <el-table-column prop="sort" label="排序" width="80" />
-            <el-table-column prop="itemDesc" label="描述说明" />
+            <el-table-column prop="itemDesc" label="含义描述说明" />
             <el-table-column fixed="right" label="操作" width="120">
               <template #default="scope">
                 <el-button link type="primary" size="small" @click="editSingleItem(scope.row)">
@@ -484,16 +428,16 @@ export default {
       </div>
     </el-dialog>
 
-    <el-dialog v-model="showEditItemDialog" title="编辑字典值信息">
+    <el-dialog v-model="showEditItemDialog" :title="itemDialogType === 'CREATE' ? '新增字典值' : '编辑字典值' ">
       <el-form ref="editItemDetailForm" :model="editItemDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="18">
-          <el-form-item label="KEY">
-            <el-input v-model="editItemDetail.itemKey" readonly="true" disabled />
+          <el-form-item label="值" prop="value" :rules="editFieldRules.value">
+            <el-input v-model="editItemDetail.value" :disabled="itemDialogType !== 'CREATE'" />
           </el-form-item>
         </el-col>
         <el-col :span="18">
-          <el-form-item label="VALUE" prop="itemValue" :rules="editFieldRules.itemValue">
-            <el-input v-model="editItemDetail.itemValue" placeholder="输入字典value" maxlength="64" show-word-limit />
+          <el-form-item label="显示名称" prop="showName" :rules="editFieldRules.showName">
+            <el-input v-model="editItemDetail.showName" placeholder="输入字典值显示名称" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="18">
@@ -502,7 +446,7 @@ export default {
           </el-form-item>
         </el-col>
         <el-col :span="18">
-          <el-form-item label="字典集描述">
+          <el-form-item label="字典值含义描述">
             <el-input v-model="editItemDetail.itemDesc" type="textarea" :rows="3" placeholder="输入简要描述信息" clearable maxlength="256" show-word-limit />
           </el-form-item>
         </el-col>
@@ -513,41 +457,6 @@ export default {
             取消
           </el-button>
           <el-button type="primary" @click="saveEditItemOperation">
-            保存
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
-
-    <el-dialog v-model="showCreateItemDialog" title="创建字典值">
-      <el-form ref="createItemDetailForm" :model="editItemDetail" size="default" label-width="120px" :rules="editFieldRules">
-        <el-col :span="18">
-          <el-form-item label="KEY" prop="itemKey" :rules="editFieldRules.itemKey">
-            <el-input v-model="editItemDetail.itemKey" placeholder="输入字典key" maxlength="64" show-word-limit />
-          </el-form-item>
-        </el-col>
-        <el-col :span="18">
-          <el-form-item label="VALUE" prop="itemValue" :rules="editFieldRules.itemValue">
-            <el-input v-model="editItemDetail.itemValue" placeholder="输入字典value" maxlength="64" show-word-limit />
-          </el-form-item>
-        </el-col>
-        <el-col :span="18">
-          <el-form-item label="排序" prop="sort" :rules="editFieldRules.sort">
-            <el-input v-model="editItemDetail.sort" placeholder="输入排序值" type="number" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="18">
-          <el-form-item label="字典集描述">
-            <el-input v-model="editItemDetail.itemDesc" type="textarea" :rows="3" placeholder="输入简要描述信息" clearable maxlength="256" show-word-limit />
-          </el-form-item>
-        </el-col>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="cancelCreateItemOperation">
-            取消
-          </el-button>
-          <el-button type="primary" @click="saveCreateItemOperation">
             保存
           </el-button>
         </span>
