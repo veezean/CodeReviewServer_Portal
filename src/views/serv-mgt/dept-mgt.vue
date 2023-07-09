@@ -39,7 +39,7 @@ export default {
       })
     },
 
-    edit(node, data) {
+    edit(node:any, data:any) {
       this.editDeptDetail = {
         deptId: node.key,
         parentId: node.data.parentId,
@@ -53,7 +53,7 @@ export default {
     },
 
     saveEdit() {
-      this.$refs.editDeptDetailForm.validate((valid) => {
+      (this.$refs.editDeptDetailForm as any).validate((valid:any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -61,7 +61,7 @@ export default {
           })
         }
         else {
-          api.post(`server/dept/modifyDept?deptId=${this.editDeptDetail.deptId}`, this.editDeptDetail).then((resp) => {
+          api.post(`server/dept/modifyDept?deptId=${(this.editDeptDetail as any).deptId}`, this.editDeptDetail).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -91,7 +91,7 @@ export default {
     },
 
     saveCreateOperation() {
-      this.$refs.createDeptDetailForm.validate((valid) => {
+      (this.$refs.createDeptDetailForm as any).validate((valid:any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -99,7 +99,7 @@ export default {
           })
         }
         else {
-          api.post('server/dept/createDept', this.createDeptDetail).then((resp) => {
+          api.post('server/dept/createDept', this.createDeptDetail).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -119,7 +119,7 @@ export default {
       })
     },
 
-    remove(node, data) {
+    remove(node:any, data:any) {
       if (!node.isLeaf) {
         ElMessage({
           type: 'error',
@@ -137,7 +137,7 @@ export default {
         },
       )
         .then(() => {
-          api.get(`server/dept/deleteDept?deptId=${node.key}`).then((resp) => {
+          api.get(`server/dept/deleteDept?deptId=${node.key}`).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -180,7 +180,7 @@ export default {
       </div>
 
       <el-tree
-        :data="dataSource"
+        :data="dataSource as any"
         node-key="id"
         default-expand-all
         :expand-on-click-node="false"
@@ -202,7 +202,7 @@ export default {
         <el-col :span="24">
           <el-form-item label="父部门">
             <el-tree-select
-              v-model="createDeptDetail.parentId" :data="dataSource" :render-after-expand="false"
+              v-model="(createDeptDetail as any).parentId" :data="dataSource" :render-after-expand="false"
               check-strictly="true"
             />
           </el-form-item>
@@ -210,7 +210,7 @@ export default {
 
         <el-col :span="18">
           <el-form-item label="部门名称" prop="name" :rules="editFieldRules.name">
-            <el-input v-model="createDeptDetail.name" placeholder="输入部门名称" maxlength="64" show-word-limit />
+            <el-input v-model="(createDeptDetail as any).name" placeholder="输入部门名称" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
       </el-form>
@@ -231,7 +231,7 @@ export default {
         <el-col :span="24">
           <el-form-item label="父部门">
             <el-tree-select
-              v-model="editDeptDetail.parentId" :data="dataSource" :render-after-expand="false"
+              v-model="(editDeptDetail as any).parentId" :data="dataSource" :render-after-expand="false"
               check-strictly="true"
             />
           </el-form-item>
@@ -239,7 +239,7 @@ export default {
 
         <el-col :span="18">
           <el-form-item label="部门名称" prop="name" :rules="editFieldRules.name">
-            <el-input v-model="editDeptDetail.name" placeholder="输入部门名称" maxlength="64" show-word-limit />
+            <el-input v-model="(editDeptDetail as any).name" placeholder="输入部门名称" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
       </el-form>

@@ -58,7 +58,7 @@ export default {
       }
       this.clickSearch()
     },
-    getSelectedRows(val) {
+    getSelectedRows(val:any) {
       this.selectedRows = val
       if (this.selectedRows && this.selectedRows.length !== 0) {
         this.batchBtnEnable = true
@@ -67,7 +67,7 @@ export default {
         this.batchBtnEnable = false
       }
     },
-    deleteSelection(val) {
+    deleteSelection(val:any) {
       ElMessageBox.confirm(
         '确定要删除所选项目吗？此操作不可恢复！',
         'Warning',
@@ -81,9 +81,9 @@ export default {
           const projectIds = []
           for (let index = 0; index < this.selectedRows.length; index++) {
             const element = this.selectedRows[index]
-            projectIds.push(element.id)
+            projectIds.push((element as any).id)
           }
-          api.get(`server/project/deleteProjects?projectIds=${projectIds}`).then((resp) => {
+          api.get(`server/project/deleteProjects?projectIds=${projectIds}`).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -114,7 +114,7 @@ export default {
         },
       )
         .then(() => {
-          api.get(`server/project/deleteProject?projectId=${val.id}`).then((resp) => {
+          api.get(`server/project/deleteProject?projectId=${val.id}`).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -134,8 +134,8 @@ export default {
 
         })
     },
-    editSingle(val) {
-      api.get(`server/project/queryProject?projectId=${val.id}`).then((resp) => {
+    editSingle(val:any) {
+      api.get(`server/project/queryProject?projectId=${val.id}`).then((resp:any) => {
         this.editDetail = {
           projectName: resp.data.projectName,
           projectDesc: resp.data.projectDesc,
@@ -143,15 +143,15 @@ export default {
           id: resp.data.id,
         }
         this.showEditDialog = true
-      }).catch(() => {
+      }).catch((reason) => {
         ElMessage({
           type: 'error',
-          message: `编辑失败：${resp.message}`,
+          message: `编辑失败：${reason}`,
         })
       })
     },
     saveEditOperation() {
-      this.$refs.editDetailForm.validate((valid) => {
+      (this.$refs.editDetailForm as any).validate((valid:any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -159,7 +159,7 @@ export default {
           })
         }
         else {
-          api.post(`server/project/modifyProject?projId=${this.editDetail.id}`, this.editDetail).then((resp) => {
+          api.post(`server/project/modifyProject?projId=${(this.editDetail as any).id}`, this.editDetail).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -192,7 +192,7 @@ export default {
       this.showCreateDialog = false
     },
     saveCreateOperation() {
-      this.$refs.createDetailForm.validate((valid) => {
+      (this.$refs.createDetailForm as any).validate((valid:any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -200,7 +200,7 @@ export default {
           })
         }
         else {
-          api.post('server/project/createProject', this.createDetail).then((resp) => {
+          api.post('server/project/createProject', this.createDetail).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -303,25 +303,25 @@ export default {
       <el-form ref="editDetailForm" :model="editDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="18">
           <el-form-item label="项目ID">
-            <el-input v-model="editDetail.id" readonly="true" disabled />
+            <el-input v-model="(editDetail as any).id" readonly disabled />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="项目名称" prop="projectName" :rules="editFieldRules.projectName">
-            <el-input v-model="editDetail.projectName" placeholder="输入项目的名称" maxlength="64" show-word-limit />
+            <el-input v-model="(editDetail as any).projectName" placeholder="输入项目的名称" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item label="归属部门">
             <el-tree-select
-              v-model="editDetail.departmentId" :data="departmentTree" :render-after-expand="false"
+              v-model="(editDetail as any).departmentId" :data="departmentTree" :render-after-expand="false"
               check-strictly="true"
             />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="项目描述">
-            <el-input v-model="editDetail.projectDesc" type="textarea" :rows="3" placeholder="输入项目的简要描述信息" clearable maxlength="32" show-word-limit />
+            <el-input v-model="(editDetail as any).projectDesc" type="textarea" :rows="3" placeholder="输入项目的简要描述信息" clearable maxlength="32" show-word-limit />
           </el-form-item>
         </el-col>
       </el-form>
@@ -341,20 +341,20 @@ export default {
       <el-form ref="createDetailForm" :model="createDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="18">
           <el-form-item label="项目名称" prop="projectName" :rules="editFieldRules.projectName">
-            <el-input v-model="createDetail.projectName" placeholder="输入项目的名称" maxlength="64" show-word-limit />
+            <el-input v-model="(createDetail as any).projectName" placeholder="输入项目的名称" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="24">
           <el-form-item label="归属部门">
             <el-tree-select
-              v-model="createDetail.departmentId" :data="departmentTree" :render-after-expand="false"
+              v-model="(createDetail as any).departmentId" :data="departmentTree" :render-after-expand="false"
               check-strictly="true"
             />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="项目描述">
-            <el-input v-model="createDetail.projectDesc" type="textarea" :rows="3" placeholder="输入项目的简要描述信息" clearable maxlength="32" show-word-limit />
+            <el-input v-model="(createDetail as any).projectDesc" type="textarea" :rows="3" placeholder="输入项目的简要描述信息" clearable maxlength="32" show-word-limit />
           </el-form-item>
         </el-col>
       </el-form>

@@ -7,6 +7,11 @@ const useUserStore = defineStore(
   // 唯一ID
   'user',
   () => {
+    interface Resp {
+      code: number;
+      data: any;
+    }
+
     const routeStore = useRouteStore()
     const menuStore = useMenuStore()
 
@@ -31,7 +36,7 @@ const useUserStore = defineStore(
       account: string
       password: string
     }) {
-      const res = await api.post('server/login/doLogin', {
+      const res:Resp = await api.post('server/login/doLogin', {
         account: data.account,
         password: md5(data.password),
       })
@@ -51,7 +56,7 @@ const useUserStore = defineStore(
     }
     // 登出
     async function logout() {
-      const res = await api.get('server/login/doLogout')
+      const res:Resp = await api.get('server/login/doLogout')
       if (res.code === 0) {
         localStorage.removeItem('account')
         localStorage.removeItem('name')
@@ -92,12 +97,13 @@ const useUserStore = defineStore(
         newPwd: md5(data.newpassword),
       })
     }
+
     // 修改基本信息
     async function editBaseInfo(data: {
       name: string
       phoneNumber: string
     }) {
-      const resp = await api.post('server/user/editBaseInfo', data)
+      const resp:Resp = await api.post('server/user/editBaseInfo', data)
       if (resp.code === 0) {
         localStorage.setItem('name', data.name)
         localStorage.setItem('phoneNumber', data.phoneNumber)

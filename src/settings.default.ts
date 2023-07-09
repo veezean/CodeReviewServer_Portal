@@ -48,7 +48,7 @@ const globalSettingsDefault: RecursiveRequired<Settings.all> = {
     enable: true,
     dates: '2020-2023',
     company: 'Fantastic-admin',
-    website: 'http://blog.codingcoder.cn/post/codereviewserverdeploydoc.html',
+    website: 'https://blog.codingcoder.cn/post/codereviewserverdeploydoc.html',
     beian: '',
   },
 }

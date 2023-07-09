@@ -43,7 +43,7 @@ export default {
     clickSearch() {
       this.loadDataList()
     },
-    getSelectedRows(val) {
+    getSelectedRows(val:any) {
       this.selectedRows = val
       if (this.selectedRows && this.selectedRows.length !== 0) {
         this.batchBtnEnable = true
@@ -52,7 +52,7 @@ export default {
         this.batchBtnEnable = false
       }
     },
-    deleteSelection(val) {
+    deleteSelection(val:any) {
       ElMessageBox.confirm(
         '确定要删除所选字段定义吗？此操作不可恢复！',
         'Warning',
@@ -65,10 +65,10 @@ export default {
         .then(() => {
           const ids = []
           for (let index = 0; index < this.selectedRows.length; index++) {
-            const element = this.selectedRows[index]
+            const element:any = this.selectedRows[index]
             ids.push(element.id)
           }
-          api.get(`server/column/deleteColumns?columnIds=${ids}`).then((resp) => {
+          api.get(`server/column/deleteColumns?columnIds=${ids}`).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -99,7 +99,7 @@ export default {
         },
       )
         .then(() => {
-          api.get(`server/column/deleteColumn?columnId=${val.id}`).then((resp) => {
+          api.get(`server/column/deleteColumn?columnId=${val.id}`).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -119,20 +119,20 @@ export default {
 
         })
     },
-    editSingle(val) {
-      api.get(`server/column/queryColumn?columnId=${val.id}`).then((resp) => {
+    editSingle(val:any) {
+      api.get(`server/column/queryColumn?columnId=${val.id}`).then((resp:any) => {
         this.editDetail = resp.data
         this.editColumnId = val.id
         this.showEditDialog = true
-      }).catch(() => {
+      }).catch((reason) => {
         ElMessage({
           type: 'error',
-          message: `编辑失败：${resp.message}`,
+          message: `编辑失败：${reason}`,
         })
       })
     },
     saveEditOperation() {
-      this.$refs.editDetailForm.validate((valid) => {
+      (this.$refs.editDetailForm as any).validate((valid:any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -140,7 +140,7 @@ export default {
           })
         }
         else {
-          api.post(`server/column/createOrModifyColumn?columnId=${this.editColumnId}`, this.editDetail).then((resp) => {
+          api.post(`server/column/createOrModifyColumn?columnId=${this.editColumnId}`, this.editDetail).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -174,28 +174,28 @@ export default {
     },
 
     selectDictCollection() {
-      api.get('server/dict/queryDictCollections').then((res) => {
+      api.get('server/dict/queryDictCollections').then((res:any) => {
         this.dictCollectionList = res.data
       })
 
       this.showSelectDictCollectionDialog = true
     },
 
-    showDictCollectionItems(collCode) {
-      api.get(`server/dict/queryDictItems?collectionCode=${collCode}`).then((res) => {
+    showDictCollectionItems(collCode:any) {
+      api.get(`server/dict/queryDictItems?collectionCode=${collCode}`).then((res:any) => {
         this.dictItemList = res.data
       })
 
       this.showDictItemsDialog = true
     },
 
-    bindDictCollection(collCode) {
-      this.editDetail.dictCollectionCode = collCode
+    bindDictCollection(collCode:any) {
+      (this.editDetail as any).dictCollectionCode = collCode
       this.showSelectDictCollectionDialog = false
     },
 
     showInJson() {
-      api.get('server/column/getJsonContent').then((res) => {
+      api.get('server/column/getJsonContent').then((res:any) => {
         this.jsonContent = res.data
       })
       this.showJsonDialog = true
@@ -444,26 +444,26 @@ export default {
       <el-form ref="editDetailForm" :model="editDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="12">
           <el-form-item label="字段编码" prop="columnCode" :rules="editFieldRules.columnCode">
-            <el-input v-model="editDetail.columnCode" placeholder="输入字段编码" maxlength="64" show-word-limit :disabled="editDetail.systemInitialization" />
-            <el-aside v-if="editDetail.systemInitialization" style="color: red;">
+            <el-input v-model="(editDetail as any).columnCode" placeholder="输入字段编码" maxlength="64" show-word-limit :disabled="(editDetail as any).systemInitialization" />
+            <el-aside v-if="(editDetail as any).systemInitialization" style="color: red;">
               系统预置字段不允许修改字段编码值
             </el-aside>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="显示名称" prop="showName" :rules="editFieldRules.showName">
-            <el-input v-model="editDetail.showName" placeholder="输入显示名称" maxlength="64" show-word-limit />
+            <el-input v-model="(editDetail as any).showName" placeholder="输入显示名称" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
 
         <el-col :span="6">
-          <el-form-item label="字段排序" prop="sortIndex" :rules="editFieldRules.sortIndex">
-            <el-input v-model="editDetail.sortIndex" type="number" />
+          <el-form-item label="字段排序" prop="sortIndex" :rules="(editFieldRules as any).sortIndex">
+            <el-input v-model="(editDetail as any).sortIndex" type="number" />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="系统预置">
-            <el-radio-group v-model="editDetail.systemInitialization" readonly="true" disabled>
+            <el-radio-group v-model="(editDetail as any).systemInitialization" readonly="true" disabled>
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -475,7 +475,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="输入类型">
-            <el-radio-group v-model="editDetail.inputType">
+            <el-radio-group v-model="(editDetail as any).inputType">
               <el-radio label="TEXT" size="large">
                 单行文本框
               </el-radio>
@@ -486,10 +486,10 @@ export default {
                 下拉选择框
               </el-radio>
             </el-radio-group>
-            <div v-if="editDetail.inputType === 'COMBO_BOX'" class="select-collection-button">
-              <div v-if="editDetail.dictCollectionCode">
-                已绑定：{{ editDetail.dictCollectionCode }}
-                <el-button link type="primary" size="small" @click="showDictCollectionItems(editDetail.dictCollectionCode)">
+            <div v-if="(editDetail as any).inputType === 'COMBO_BOX'" class="select-collection-button">
+              <div v-if="(editDetail as any).dictCollectionCode">
+                已绑定：{{ (editDetail as any).dictCollectionCode }}
+                <el-button link type="primary" size="small" @click="showDictCollectionItems((editDetail as any).dictCollectionCode)">
                   查看
                 </el-button>
 
@@ -497,7 +497,7 @@ export default {
                   更换
                 </el-button>
               </div>
-              <div v-if="!editDetail.dictCollectionCode">
+              <div v-if="!(editDetail as any).dictCollectionCode">
                 未绑定
                 <el-button link type="danger" size="small" @click="selectDictCollection()">
                   点击绑定
@@ -508,7 +508,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="是否必填">
-            <el-radio-group v-model="editDetail.required">
+            <el-radio-group v-model="(editDetail as any).required">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -520,7 +520,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="IDEA表格中显示">
-            <el-radio-group v-model="editDetail.showInIdeaTable">
+            <el-radio-group v-model="(editDetail as any).showInIdeaTable">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -530,7 +530,7 @@ export default {
             </el-radio-group>
           </el-form-item>
           <el-form-item label="Web表格中显示">
-            <el-radio-group v-model="editDetail.showInWebTable">
+            <el-radio-group v-model="(editDetail as any).showInWebTable">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -538,16 +538,16 @@ export default {
                 否
               </el-radio>
             </el-radio-group>
-            <div v-if="editDetail.showInWebTable === true" class="select-collection-button">
+            <div v-if="(editDetail as any).showInWebTable === true" class="select-collection-button">
               <el-form-item label="Web表格占用宽度" label-width="200">
-                <el-input v-model="editDetail.webTableColumnWidth" type="number" />
+                <el-input v-model="(editDetail as any).webTableColumnWidth" type="number" />
               </el-form-item>
             </div>
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="新增界面显示">
-            <el-radio-group v-model="editDetail.showInAddPage">
+            <el-radio-group v-model="(editDetail as any).showInAddPage">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -559,7 +559,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="新增界面可编辑">
-            <el-radio-group v-model="editDetail.editableInAddPage">
+            <el-radio-group v-model="(editDetail as any).editableInAddPage">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -571,7 +571,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="编辑界面显示">
-            <el-radio-group v-model="editDetail.showInEditPage">
+            <el-radio-group v-model="(editDetail as any).showInEditPage">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -583,7 +583,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="编辑界面可编辑">
-            <el-radio-group v-model="editDetail.editableInEditPage">
+            <el-radio-group v-model="(editDetail as any).editableInEditPage">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -595,7 +595,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="确认界面显示">
-            <el-radio-group v-model="editDetail.showInConfirmPage">
+            <el-radio-group v-model="(editDetail as any).showInConfirmPage">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -607,7 +607,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="确认界面可编辑">
-            <el-radio-group v-model="editDetail.editableInConfirmPage">
+            <el-radio-group v-model="(editDetail as any).editableInConfirmPage">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -619,7 +619,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="支持导出到表格">
-            <el-radio-group v-model="editDetail.supportInExcel">
+            <el-radio-group v-model="(editDetail as any).supportInExcel">
               <el-radio :label="true" size="large">
                 是
               </el-radio>
@@ -627,9 +627,9 @@ export default {
                 否
               </el-radio>
             </el-radio-group>
-            <div v-if="editDetail.supportInExcel === true" class="select-collection-button">
+            <div v-if="(editDetail as any).supportInExcel === true" class="select-collection-button">
               <el-form-item label="导出Excel列宽">
-                <el-input v-model="editDetail.excelColumnWidth" type="number" />
+                <el-input v-model="(editDetail as any).excelColumnWidth" type="number" />
               </el-form-item>
             </div>
           </el-form-item>

@@ -89,7 +89,7 @@ export default {
       this.search.pageIndex = val
       this.clickSearch()
     },
-    getSelectedRows(val) {
+    getSelectedRows(val:any) {
       this.selectedRows = val
       if (this.selectedRows && this.selectedRows.length !== 0) {
         this.batchBtnEnable = true
@@ -98,7 +98,7 @@ export default {
         this.batchBtnEnable = false
       }
     },
-    deleteSelection(val) {
+    deleteSelection(val:any) {
       ElMessageBox.confirm(
         '确定要删除所选用户吗？此操作不可恢复！',
         'Warning',
@@ -111,10 +111,10 @@ export default {
         .then(() => {
           const accounts = []
           for (let index = 0; index < this.selectedRows.length; index++) {
-            const element = this.selectedRows[index]
+            const element:any = this.selectedRows[index]
             accounts.push(element.account)
           }
-          api.get(`server/user/deleteUsers?accounts=${accounts}`).then((resp) => {
+          api.get(`server/user/deleteUsers?accounts=${accounts}`).then((resp: any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -145,7 +145,7 @@ export default {
         },
       )
         .then(() => {
-          api.get(`server/user/deleteUser?account=${val.account}`).then((resp) => {
+          api.get(`server/user/deleteUser?account=${val.account}`).then((resp: any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -165,24 +165,23 @@ export default {
 
         })
     },
-    editSingle(val) {
-      api.get(`server/user/getUserDetail?account=${val.account}`).then((resp) => {
+    editSingle(val:any) {
+      api.get(`server/user/getUserDetail?account=${val.account}`).then((resp: any) => {
         this.editUserDetail = resp.data
         this.selectedRoles = []
-        for (let index = 0; index < this.editUserDetail.roles.length; index++) {
-          const element = this.editUserDetail.roles[index].id
-          this.selectedRoles.push(element)
+        for (let index = 0; index < (this.editUserDetail as any).roles.length; index++) {
+          (this.selectedRoles as any).push((this.editUserDetail as any).roles[index].id)
         }
         this.showEditDialog = true
-      }).catch(() => {
+      }).catch((reason) => {
         ElMessage({
           type: 'error',
-          message: `编辑失败：${resp.message}`,
+          message: `编辑失败：${reason}`,
         })
       })
     },
     saveEditOperation() {
-      this.$refs.editUserDetailForm.validate((valid) => {
+      (this.$refs.editUserDetailForm as any).validate((valid: any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -191,12 +190,12 @@ export default {
         }
         else {
           api.post('server/user/modifyUser', {
-            account: this.editUserDetail.account,
-            name: this.editUserDetail.name,
-            departmentId: this.editUserDetail.department.id,
-            phoneNumber: this.editUserDetail.phoneNumber,
+            account: (this.editUserDetail as any).account,
+            name: (this.editUserDetail as any).name,
+            departmentId: (this.editUserDetail as any).department.id,
+            phoneNumber: (this.editUserDetail as any).phoneNumber,
             roles: this.selectedRoles,
-          }).then((resp) => {
+          }).then((resp: any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -232,7 +231,7 @@ export default {
       this.showCreateDialog = false
     },
     saveCreateOperation() {
-      this.$refs.createUserDetailForm.validate((valid) => {
+      (this.$refs.createUserDetailForm as any).validate((valid: any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -240,8 +239,8 @@ export default {
           })
         }
         else {
-          this.createUserDetail.roles = this.selectedRoles
-          api.post('server/user/createUser', this.createUserDetail).then((resp) => {
+          (this.createUserDetail as any).roles = this.selectedRoles
+          api.post('server/user/createUser', this.createUserDetail).then((resp: any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -380,24 +379,24 @@ export default {
       <el-form ref="editUserDetailForm" :model="editUserDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="18">
           <el-form-item label="账号">
-            <el-input v-model="editUserDetail.account" placeholder="用户账号" readonly="true" disabled />
+            <el-input v-model="(editUserDetail as any).account" placeholder="用户账号" readonly disabled />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="姓名" prop="name" :rules="editFieldRules.name">
-            <el-input v-model="editUserDetail.name" placeholder="用户姓名" maxlength="64" show-word-limit />
+            <el-input v-model="(editUserDetail as any).name" placeholder="用户姓名" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="手机号">
-            <el-input v-model="editUserDetail.phoneNumber" placeholder="手机号" clearable maxlength="32" show-word-limit />
+            <el-input v-model="(editUserDetail as any).phoneNumber" placeholder="手机号" clearable maxlength="32" show-word-limit />
           </el-form-item>
         </el-col>
 
         <el-col :span="24">
           <el-form-item label="部门">
             <el-tree-select
-              v-model="editUserDetail.department.id" :data="departmentTree" :render-after-expand="false"
+              v-model="(editUserDetail as any).department.id" :data="departmentTree" :render-after-expand="false"
               check-strictly="true"
             />
           </el-form-item>
@@ -412,9 +411,9 @@ export default {
             >
               <el-option
                 v-for="item in roleList"
-                :key="item.id"
-                :label="item.roleName"
-                :value="item.id"
+                :key="(item as any).id"
+                :label="(item as any).roleName"
+                :value="(item as any).id"
               />
             </el-select>
           </el-form-item>
@@ -436,24 +435,24 @@ export default {
       <el-form ref="createUserDetailForm" :model="createUserDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="18">
           <el-form-item label="账号" prop="account" :rules="editFieldRules.account">
-            <el-input v-model="createUserDetail.account" placeholder="输入用户账号" maxlength="64" show-word-limit />
+            <el-input v-model="(createUserDetail as any).account" placeholder="输入用户账号" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="姓名" prop="name" :rules="editFieldRules.name">
-            <el-input v-model="createUserDetail.name" placeholder="输入用户姓名" maxlength="64" show-word-limit />
+            <el-input v-model="(createUserDetail as any).name" placeholder="输入用户姓名" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="手机号">
-            <el-input v-model="createUserDetail.phoneNumber" placeholder="手机号" clearable maxlength="32" show-word-limit />
+            <el-input v-model="(createUserDetail as any).phoneNumber" placeholder="手机号" clearable maxlength="32" show-word-limit />
           </el-form-item>
         </el-col>
 
         <el-col :span="24">
           <el-form-item label="部门">
             <el-tree-select
-              v-model="createUserDetail.departmentId" :data="departmentTree" :render-after-expand="false"
+              v-model="(createUserDetail as any).departmentId" :data="departmentTree" :render-after-expand="false"
               check-strictly="true"
             />
           </el-form-item>
@@ -468,9 +467,9 @@ export default {
             >
               <el-option
                 v-for="item in roleList"
-                :key="item.id"
-                :label="item.roleName"
-                :value="item.id"
+                :key="(item as any).id"
+                :label="(item as any).roleName"
+                :value="(item as any).id"
               />
             </el-select>
           </el-form-item>

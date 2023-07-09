@@ -30,13 +30,6 @@ export default {
         sortBy: 'createTime',
         sortType: 'desc',
         queryParams: {
-          identifier: null,
-          projectId: '',
-          departmentId: '',
-          commitUser: null,
-          realConfirmUser: userStore.account,
-          assignConfirmUser: null,
-          confirmResult: null,
         },
       },
 
@@ -59,11 +52,11 @@ export default {
 
   },
   mounted() {
+    this.resetSearch()
     this.getColumnFields()
     this.loadUserList()
     this.loadProjects()
     this.loadConfirmResultItems()
-    this.clickSearch()
     this.loadDepartmentTree()
   },
   methods: {
@@ -74,7 +67,7 @@ export default {
     },
 
     loadProjects() {
-      api.get(`server/project/queryProjectInDept?deptId=${this.search.queryParams.departmentId}`).then((res) => {
+      api.get(`server/project/queryProjectInDept?deptId=${(this.search.queryParams as any).departmentId}`).then((res) => {
         this.listProjects = res.data
       })
     },
@@ -120,7 +113,7 @@ export default {
       this.search.pageIndex = val
       this.clickSearch()
     },
-    getSelectedRows(val) {
+    getSelectedRows(val:any) {
       this.selectedRows = val
       if (this.selectedRows && this.selectedRows.length !== 0) {
         this.batchBtnEnable = true
@@ -130,23 +123,23 @@ export default {
       }
     },
 
-    viewSingle(val) {
-      api.get(`server/comment/initViewReqBody?identifier=${val.identifier}`).then((resp) => {
+    viewSingle(val:any) {
+      api.get(`server/comment/initViewReqBody?identifier=${val.identifier}`).then((resp:any) => {
         this.editDetail = resp.data
 
         this.dialogTitle = '评审意见详情'
         this.dialogType = 'VIEW'
         this.showEditDialog = true
-      }).catch(() => {
+      }).catch((reason) => {
         ElMessage({
           type: 'error',
-          message: `编辑失败：${resp.message}`,
+          message: `编辑失败：${reason}`,
         })
       })
     },
 
     saveOperation() {
-      this.$refs.editDetailForm.validate((valid) => {
+      (this.$refs.editDetailForm as any).validate((valid:any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -166,7 +159,7 @@ export default {
             return
           }
 
-          api.post(reqUrl, this.editDetail).then((resp) => {
+          api.post(reqUrl, this.editDetail).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -192,16 +185,16 @@ export default {
     cancelCreateOperation() {
       this.showEditDialog = false
     },
-    confirmSingle(val) {
+    confirmSingle(val:any) {
       api.get(`server/comment/initConfirmReqBody?identifier=${val.identifier}`).then((resp) => {
         this.editDetail = resp.data
         this.dialogTitle = '评审意见确认'
         this.dialogType = 'CONFIRM'
         this.showEditDialog = true
-      }).catch(() => {
+      }).catch((reason) => {
         ElMessage({
           type: 'error',
-          message: `编辑失败：${resp.message}`,
+          message: `编辑失败：${reason}`,
         })
       })
     },
@@ -220,12 +213,12 @@ export default {
           <el-row>
             <el-col :span="6">
               <el-form-item label="检视人员">
-                <el-select v-model.trim="search.queryParams.commitUser" placeholder="请输入姓名或账号查询" clearable filterable>
+                <el-select v-model.trim="(search.queryParams as any).commitUser" placeholder="请输入姓名或账号查询" clearable filterable>
                   <el-option
                     v-for="(item, index) in listUsers"
-                    :key="item.account"
-                    :label="item.name"
-                    :value="item.account"
+                    :key="(item as any).account"
+                    :label="(item as any).name"
+                    :value="(item as any).account"
                   />
                 </el-select>
               </el-form-item>
@@ -233,12 +226,12 @@ export default {
 
             <el-col :span="6">
               <el-form-item label="确认结果">
-                <el-select v-model.trim="search.queryParams.confirmResult" placeholder="输入评审意见的确认状态" clearable>
+                <el-select v-model.trim="(search.queryParams as any).confirmResult" placeholder="输入评审意见的确认状态" clearable>
                   <el-option
                     v-for="(item, index) in confirmResultItems"
-                    :key="item.value"
-                    :label="item.showName"
-                    :value="item.value"
+                    :key="(item as any).value"
+                    :label="(item as any).showName"
+                    :value="(item as any).value"
                   />
                 </el-select>
               </el-form-item>
@@ -247,13 +240,13 @@ export default {
           <el-row>
             <el-col :span="6">
               <el-form-item label="唯一ID">
-                <el-input v-model="search.queryParams.identifier" placeholder="输入评审意见唯一ID进行查询" clearable />
+                <el-input v-model="(search.queryParams as any).identifier" placeholder="输入评审意见唯一ID进行查询" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="归属部门">
                 <el-tree-select
-                  v-model="search.queryParams.departmentId"
+                  v-model="(search.queryParams as any).departmentId"
                   :data="departmentTree" :render-after-expand="false" check-strictly="true"
                   @change="loadProjects"
                 />
@@ -261,12 +254,12 @@ export default {
             </el-col>
             <el-col :span="6">
               <el-form-item label="归属项目">
-                <el-select v-model.trim="search.queryParams.projectId" placeholder="请输入姓名或账号查询" clearable filterable>
+                <el-select v-model.trim="(search.queryParams as any).projectId" placeholder="请选择" clearable filterable>
                   <el-option
                     v-for="(item, index) in listProjects"
-                    :key="item.id"
-                    :label="item.projectName"
-                    :value="item.id"
+                    :key="(item as any).id"
+                    :label="(item as any).projectName"
+                    :value="(item as any).id"
                   />
                 </el-select>
               </el-form-item>
@@ -295,11 +288,11 @@ export default {
         <el-table-column type="selection" width="55" />
         <template v-for="(col, idx) in columnFields">
           <el-table-column
-            v-if="col.showInWebTable"
-            :key="col.columnCode"
-            :prop="col.columnCode"
-            :label="col.showName"
-            :width="col.webTableColumnWidth"
+            v-if="(col as any).showInWebTable"
+            :key="(col as any).columnCode"
+            :prop="(col as any).columnCode"
+            :label="(col as any).showName"
+            :width="(col as any).webTableColumnWidth"
             :index="idx"
           />
         </template>
@@ -330,13 +323,13 @@ export default {
 
     <el-dialog v-model="showEditDialog" :title="dialogTitle">
       <el-form ref="editDetailForm" :model="editDetail" size="default" label-width="120px" :rules="editFieldRules">
-        <template v-for="(column, idx) in editDetail.fieldModelList">
+        <template v-for="(column, idx) in (editDetail as any).fieldModelList">
           <div v-if="column.show">
             <el-form-item v-if="column.inputType == 'TEXT'" :label="column.showName">
-              <el-input v-model="editDetail.fieldModelList[idx].valuePair.value" :disabled="column.editable === false" />
+              <el-input v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :disabled="column.editable === false" />
             </el-form-item>
             <el-form-item v-if="column.inputType == 'COMBO_BOX'" :label="column.showName">
-              <el-select v-model="editDetail.fieldModelList[idx].valuePair" :disabled="column.editable === false" filterable>
+              <el-select v-model="(editDetail as any).fieldModelList[idx].valuePair" :disabled="column.editable === false" filterable>
                 <template v-for="item in column.enumValues">
                   <el-option :label="item.showName" :value="item" />
                 </template>
@@ -344,7 +337,7 @@ export default {
             </el-form-item>
             <el-form-item v-if="column.inputType == 'TEXTAREA'" :label="column.showName">
               <el-input
-                v-model="editDetail.fieldModelList[idx].valuePair.value" :rows="5" :disabled="column.editable === false"
+                v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :rows="5" :disabled="column.editable === false"
                 type="textarea"
               />
             </el-form-item>

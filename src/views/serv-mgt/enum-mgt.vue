@@ -45,7 +45,7 @@ export default {
     clickSearch() {
       this.loadListData()
     },
-    getSelectedRows(val) {
+    getSelectedRows(val:any) {
       this.selectedRows = val
       if (this.selectedRows && this.selectedRows.length !== 0) {
         this.batchBtnEnable = true
@@ -54,7 +54,7 @@ export default {
         this.batchBtnEnable = false
       }
     },
-    deleteSelection(val) {
+    deleteSelection(val:any) {
       ElMessageBox.confirm(
         '确定要删除所选字典集吗？将同时删除此字典集下所有字典值。此操作不可恢复！',
         'Warning',
@@ -67,10 +67,10 @@ export default {
         .then(() => {
           const ids = []
           for (let index = 0; index < this.selectedRows.length; index++) {
-            const element = this.selectedRows[index]
+            const element:any = this.selectedRows[index]
             ids.push(element.id)
           }
-          api.get(`server/dict/deleteCollections?ids=${ids}`).then((resp) => {
+          api.get(`server/dict/deleteCollections?ids=${ids}`).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -101,7 +101,7 @@ export default {
         },
       )
         .then(() => {
-          api.get(`server/dict/deleteCollection?id=${val.id}`).then((resp) => {
+          api.get(`server/dict/deleteCollection?id=${val.id}`).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -121,8 +121,8 @@ export default {
 
         })
     },
-    editSingle(val) {
-      api.get(`server/dict/queryDictCollection?collectionCode=${val.code}`).then((resp) => {
+    editSingle(val:any) {
+      api.get(`server/dict/queryDictCollection?collectionCode=${val.code}`).then((resp:any) => {
         this.editDetail = {
           code: resp.data.code,
           name: resp.data.name,
@@ -132,15 +132,15 @@ export default {
         }
         this.dialogType = 'EDIT'
         this.showEditDialog = true
-      }).catch(() => {
+      }).catch((reason) => {
         ElMessage({
           type: 'error',
-          message: `编辑失败：${resp.message}`,
+          message: `编辑失败：${reason}`,
         })
       })
     },
     saveEditOperation() {
-      this.$refs.editDetailForm.validate((valid) => {
+      (this.$refs.editDetailForm as any).validate((valid:any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -152,7 +152,7 @@ export default {
           if (this.dialogType === 'CREATE') {
             reqUrl = 'server/dict/createDictCollection'
           }
-          api.post(reqUrl, this.editDetail).then((resp) => {
+          api.post(reqUrl, this.editDetail).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -194,7 +194,7 @@ export default {
       })
     },
 
-    itemManage(val) {
+    itemManage(val:any) {
       this.manageCollectionCode = val.code
       this.loadItemList()
       this.showManageDialog = true
@@ -211,7 +211,7 @@ export default {
         },
       )
         .then(() => {
-          api.get(`server/dict/deleteDictItem?dictItemId=${val.id}`).then((resp) => {
+          api.get(`server/dict/deleteDictItem?dictItemId=${val.id}`).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -233,7 +233,7 @@ export default {
     },
 
     saveEditItemOperation() {
-      this.$refs.editItemDetailForm.validate((valid) => {
+      (this.$refs.editItemDetailForm as any).validate((valid:any) => {
         if (!valid) {
           ElMessage({
             type: 'error',
@@ -241,7 +241,7 @@ export default {
           })
         }
         else {
-          api.post('server/dict/createOrModifyDictItem', this.editItemDetail).then((resp) => {
+          api.post('server/dict/createOrModifyDictItem', this.editItemDetail).then((resp:any) => {
             if (resp.code === 0) {
               ElMessage({
                 type: 'success',
@@ -271,15 +271,15 @@ export default {
       this.itemDialogType = 'CREATE'
       this.showEditItemDialog = true
     },
-    editSingleItem(val) {
-      api.get(`server/dict/queryDictItem?itemId=${val.id}`).then((resp) => {
+    editSingleItem(val:any) {
+      api.get(`server/dict/queryDictItem?itemId=${val.id}`).then((resp:any) => {
         this.editItemDetail = resp.data
         this.itemDialogType = 'EDIT'
         this.showEditItemDialog = true
-      }).catch(() => {
+      }).catch((reason) => {
         ElMessage({
           type: 'error',
-          message: `编辑失败：${resp.message}`,
+          message: `编辑失败：${reason}`,
         })
       })
     },
@@ -356,17 +356,17 @@ export default {
       <el-form ref="editDetailForm" :model="editDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="18">
           <el-form-item label="字典集编码" prop="code" :rules="editFieldRules.code">
-            <el-input v-model="editDetail.code" :disabled="dialogType === 'EDIT'" placeholder="输入字典集编码,允许英文和数字" maxlength="64" show-word-limit />
+            <el-input v-model="(editDetail as any).code" :disabled="dialogType === 'EDIT'" placeholder="输入字典集编码,允许英文和数字" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="字典集名称" prop="name" :rules="editFieldRules.name">
-            <el-input v-model="editDetail.name" placeholder="输入字典集名称" maxlength="64" show-word-limit />
+            <el-input v-model="(editDetail as any).name" placeholder="输入字典集名称" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="字典集类型" prop="type">
-            <el-radio-group v-model="editDetail.type">
+            <el-radio-group v-model="(editDetail as any).type">
               <el-radio :label="0" size="large">
                 手动配置枚举项
               </el-radio>
@@ -378,7 +378,7 @@ export default {
         </el-col>
         <el-col :span="18">
           <el-form-item label="字典集描述">
-            <el-input v-model="editDetail.dictDesc" type="textarea" :rows="3" placeholder="输入简要描述信息" clearable maxlength="256" show-word-limit />
+            <el-input v-model="(editDetail as any).dictDesc" type="textarea" :rows="3" placeholder="输入简要描述信息" clearable maxlength="256" show-word-limit />
           </el-form-item>
         </el-col>
       </el-form>
@@ -432,22 +432,22 @@ export default {
       <el-form ref="editItemDetailForm" :model="editItemDetail" size="default" label-width="120px" :rules="editFieldRules">
         <el-col :span="18">
           <el-form-item label="值" prop="value" :rules="editFieldRules.value">
-            <el-input v-model="editItemDetail.value" :disabled="itemDialogType !== 'CREATE'" />
+            <el-input v-model="(editItemDetail as any).value" :disabled="itemDialogType !== 'CREATE'" />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="显示名称" prop="showName" :rules="editFieldRules.showName">
-            <el-input v-model="editItemDetail.showName" placeholder="输入字典值显示名称" maxlength="64" show-word-limit />
+            <el-input v-model="(editItemDetail as any).showName" placeholder="输入字典值显示名称" maxlength="64" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="18">
-          <el-form-item label="排序" prop="sort" :rules="editFieldRules.sort">
-            <el-input v-model="editItemDetail.sort" placeholder="输入排序值" type="number" />
+          <el-form-item label="排序" prop="sort" :rules="(editFieldRules as any).sort">
+            <el-input v-model="(editItemDetail as any).sort" placeholder="输入排序值" type="number" />
           </el-form-item>
         </el-col>
         <el-col :span="18">
           <el-form-item label="字典值含义描述">
-            <el-input v-model="editItemDetail.itemDesc" type="textarea" :rows="3" placeholder="输入简要描述信息" clearable maxlength="256" show-word-limit />
+            <el-input v-model="(editItemDetail as any).itemDesc" type="textarea" :rows="3" placeholder="输入简要描述信息" clearable maxlength="256" show-word-limit />
           </el-form-item>
         </el-col>
       </el-form>

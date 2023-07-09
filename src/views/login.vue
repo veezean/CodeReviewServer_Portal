@@ -92,17 +92,6 @@ const registerRules = ref<FormRules>({
     },
   ],
 })
-function handleRegister() {
-  ElMessage({
-    message: '注册模块仅提供界面演示，无实际功能，需开发者自行扩展',
-    type: 'warning',
-  })
-  registerFormRef.value && registerFormRef.value.validate((valid) => {
-    if (valid) {
-      // 这里编写业务代码
-    }
-  })
-}
 
 // 重置密码
 const resetFormRef = ref<FormInstance>()
@@ -123,23 +112,7 @@ const resetRules = ref<FormRules>({
     { min: 6, max: 18, trigger: 'blur', message: '密码长度为6到18位' },
   ],
 })
-function handleReset() {
-  ElMessage({
-    message: '重置密码模块仅提供界面演示，无实际功能，需开发者自行扩展',
-    type: 'warning',
-  })
-  resetFormRef.value && resetFormRef.value.validate((valid) => {
-    if (valid) {
-      // 这里编写业务代码
-    }
-  })
-}
 
-function testAccount(account: string) {
-  loginForm.value.account = account
-  loginForm.value.password = '123456'
-  handleLogin()
-}
 </script>
 
 <template>
@@ -180,28 +153,12 @@ function testAccount(account: string) {
           <el-checkbox v-model="loginForm.remember">
             记住我
           </el-checkbox>
-          <el-link type="primary" :underline="false" @click="formType = 'reset'">
-            忘记密码了?
-          </el-link>
+
         </div>
         <el-button :loading="loading" type="primary" size="large" style="width: 100%;" @click.prevent="handleLogin">
           登录
         </el-button>
-        <div class="sub-link">
-          <span class="text">还没有帐号?</span>
-          <el-link type="primary" :underline="false" @click="formType = 'register'">
-            创建新帐号
-          </el-link>
-        </div>
-        <div style="margin-top: 20px; margin-bottom: -20px; text-align: center;">
-          <el-divider>演示账号一键登录</el-divider>
-          <el-button type="primary" size="small" plain @click="testAccount('admin')">
-            admin
-          </el-button>
-          <el-button size="small" plain @click="testAccount('test')">
-            test
-          </el-button>
-        </div>
+
       </el-form>
       <el-form v-show="formType === 'register'" ref="registerFormRef" :model="registerForm" :rules="registerRules" class="login-form" auto-complete="on">
         <div class="title-container">
@@ -250,15 +207,7 @@ function testAccount(account: string) {
             </el-input>
           </el-form-item>
         </div>
-        <el-button :loading="loading" type="primary" size="large" style="width: 100%; margin-top: 20px;" @click.prevent="handleRegister">
-          注册
-        </el-button>
-        <div class="sub-link">
-          <span class="text">已经有帐号?</span>
-          <el-link type="primary" :underline="false" @click="formType = 'login'">
-            去登录
-          </el-link>
-        </div>
+
       </el-form>
       <el-form v-show="formType === 'reset'" ref="resetFormRef" :model="resetForm" :rules="resetRules" class="login-form" auto-complete="on">
         <div class="title-container">
@@ -298,9 +247,6 @@ function testAccount(account: string) {
             </el-input>
           </el-form-item>
         </div>
-        <el-button :loading="loading" type="primary" size="large" style="width: 100%; margin-top: 20px;" @click.prevent="handleReset">
-          确认
-        </el-button>
         <div class="sub-link">
           <el-link type="primary" :underline="false" @click="formType = 'login'">
             返回登录

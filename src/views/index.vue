@@ -60,7 +60,7 @@ const oneStepAdminInfo = ref({
         </div>
       </template>
       <el-button-group>
-        <el-button type="success" size="large" plain @click="open('http://blog.codingcoder.cn/post/codereviewserverdeploydoc.html')">
+        <el-button type="success" size="large" plain @click="open('https://blog.codingcoder.cn/post/codereviewserverdeploydoc.html')">
           帮助文档
         </el-button>
         <el-dropdown>
