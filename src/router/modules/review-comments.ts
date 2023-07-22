@@ -8,8 +8,9 @@ const routes: RouteRecordRaw = {
   redirect: '/reviewcomments/mytodo',
   name: 'reviewComments',
   meta: {
-    title: '评审意见管理',
+    title: '检视数据',
     icon: 'comments',
+    auth: 'reviewcomments',
   },
   children: [
     {
@@ -19,6 +20,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '我的待办',
         icon: 'todo',
+        auth: 'mytodo',
       },
     },
     {
@@ -28,6 +30,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '我提交的',
         icon: 'commit',
+        auth: 'mycommitted',
       },
     },
     {
@@ -37,6 +40,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '我确认的',
         icon: 'confirmed',
+        auth: 'myconfirmed',
       },
     },
     {
@@ -46,6 +50,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '全部数据',
         icon: 'allcomments',
+        auth: 'all',
       },
     },
   ],

@@ -124,6 +124,7 @@ export default {
     },
 
     viewSingle(val:any) {
+      this.showEditDialog = false
       api.get(`server/comment/initViewReqBody?identifier=${val.identifier}`).then((resp:any) => {
         this.editDetail = resp.data
 
@@ -185,6 +186,7 @@ export default {
       this.showEditDialog = false
     },
     confirmSingle(val:any) {
+      this.showEditDialog = false
       api.get(`server/comment/initConfirmReqBody?identifier=${val.identifier}`).then((resp) => {
         this.editDetail = resp.data
         this.dialogTitle = '评审意见确认'

@@ -5,8 +5,8 @@ meta:
 
 <template>
   <page-main>
-    <router-link :to="{ name: 'AllComments' }">
-      查看详情页333
+    <router-link :to="{ name: 'reportDashBoard' }">
+      敬请期待，即将上线
     </router-link>
   </page-main>
 </template>

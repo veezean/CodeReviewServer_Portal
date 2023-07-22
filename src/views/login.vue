@@ -342,8 +342,8 @@ const resetRules = ref<FormRules>({
       position: absolute;
       top: 20px;
       left: 20px;
-      width: 30px;
-      height: 30px;
+      width: 60px;
+      height: 60px;
       border-radius: 4px;
       background: url("../assets/images/logo.png") no-repeat;
       background-size: contain;
