@@ -24,7 +24,7 @@ const useUserStore = defineStore(
     const isLogin = computed(() => {
       let retn = false
       if (token.value) {
-        if (new Date().getTime() < parseInt(failure_time.value) * 1000) {
+        if (new Date().getTime() < parseInt(failure_time.value)) {
           retn = true
         }
       }
@@ -78,13 +78,8 @@ const useUserStore = defineStore(
     // 获取我的权限
     async function getPermissions() {
       // 通过 mock 获取权限
-      const res = await api.get('member/permission', {
-        baseURL: '/mock/',
-        params: {
-          account: account.value,
-        },
-      })
-      permissions.value = res.data.permissions
+      const res = await api.get('server/role/getUserCanAccessPages')
+      permissions.value = res.data
       return permissions.value
     }
     // 修改密码

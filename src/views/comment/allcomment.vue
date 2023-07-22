@@ -188,6 +188,7 @@ export default {
         })
     },
     viewSingle(val:any) {
+      this.showEditDialog = false
       api.get(`server/comment/initViewReqBody?identifier=${val.identifier}`).then((resp:any) => {
         this.editDetail = resp.data
 
@@ -202,6 +203,7 @@ export default {
       })
     },
     editSingle(val:any) {
+      this.showEditDialog = false
       api.get(`server/comment/initEditReqBody?identifier=${val.identifier}`).then((resp:any) => {
         this.editDetail = resp.data
         this.dialogTitle = '修改评审意见'
@@ -265,6 +267,7 @@ export default {
     },
 
     create() {
+      this.showEditDialog = false
       api.get('server/comment/initCreateReqBody').then((resp) => {
         this.editDetail = resp.data
         this.dialogTitle = '添加评审意见'
@@ -282,6 +285,7 @@ export default {
       this.showEditDialog = false
     },
     confirmSingle(val:any) {
+      this.showEditDialog = false
       api.get(`server/comment/initConfirmReqBody?identifier=${val.identifier}`).then((resp) => {
         this.editDetail = resp.data
         this.dialogTitle = '评审意见确认'

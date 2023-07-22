@@ -8,8 +8,9 @@ const routes: RouteRecordRaw = {
   redirect: '/reports/dashboard',
   name: 'reportDashboard',
   meta: {
-    title: '统计管理',
+    title: '统计报表',
     icon: 'report',
+    auth: 'reports',
   },
   children: [
     {
@@ -19,6 +20,7 @@ const routes: RouteRecordRaw = {
       meta: {
         title: '数据报表',
         icon: 'dashboard',
+        auth: 'dashboard',
       },
     },
   ],

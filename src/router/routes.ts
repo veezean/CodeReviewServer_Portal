@@ -87,8 +87,8 @@ const asyncRoutes: Route.recordMainRaw[] = [
     children: [
       ReviewComments,
       ServiceMgt,
-      ReportDashboard,
       SystemConfig,
+      ReportDashboard,
     ],
   },
 ]
