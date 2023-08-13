@@ -469,6 +469,14 @@ export default {
                 </template>
               </el-select>
             </el-form-item>
+            <el-form-item v-if="column.inputType == 'DATE'" :label="column.showName">
+              <el-date-picker :disabled="column.editable === false"
+                  v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
+                  type="date"
+                  value-format="YYYY-MM-DD"
+                  placeholder="点击选择日期"
+              />
+            </el-form-item>
             <el-form-item v-if="column.inputType == 'TEXTAREA'" :label="column.showName">
               <el-input
                 v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :rows="5" :disabled="column.editable === false"

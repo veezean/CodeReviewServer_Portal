@@ -277,6 +277,9 @@ export default {
             <p v-if="scope.row.inputType === 'TEXTAREA'">
               多行文本
             </p>
+            <p v-if="scope.row.inputType === 'DATE'">
+              日期
+            </p>
           </template>
         </el-table-column>
         <el-table-column prop="required" label="必填" width="60" align="center">
@@ -481,6 +484,9 @@ export default {
               </el-radio>
               <el-radio label="TEXTAREA" size="large">
                 多行文本框
+              </el-radio>
+              <el-radio label="DATE" size="large">
+                日期
               </el-radio>
               <el-radio label="COMBO_BOX" size="large">
                 下拉选择框
