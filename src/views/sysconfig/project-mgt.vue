@@ -18,9 +18,7 @@ export default {
           deptId: null,
         },
       },
-      departmentTree: {
-
-      },
+      departmentTree: [],
       projectList: [],
       selectedRows: [],
       editDetail: { },
@@ -237,7 +235,7 @@ export default {
               <el-form-item label="归属部门">
                 <el-tree-select
                   v-model="search.queryParams.deptId" :data="departmentTree" :render-after-expand="false"
-                  check-strictly="true"
+                  check-strictly
                 />
               </el-form-item>
             </el-col>
@@ -315,7 +313,7 @@ export default {
           <el-form-item label="归属部门">
             <el-tree-select
               v-model="(editDetail as any).departmentId" :data="departmentTree" :render-after-expand="false"
-              check-strictly="true"
+              check-strictly
             />
           </el-form-item>
         </el-col>
@@ -348,7 +346,7 @@ export default {
           <el-form-item label="归属部门">
             <el-tree-select
               v-model="(createDetail as any).departmentId" :data="departmentTree" :render-after-expand="false"
-              check-strictly="true"
+              check-strictly
             />
           </el-form-item>
         </el-col>

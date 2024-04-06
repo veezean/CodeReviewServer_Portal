@@ -33,9 +33,7 @@ export default {
         },
       },
 
-      departmentTree: {
-
-      },
+      departmentTree: [],
       listProjects: [],
       listUsers: [],
       selectedRoles: [],
@@ -249,7 +247,7 @@ export default {
               <el-form-item label="归属部门">
                 <el-tree-select
                   v-model="(search.queryParams as any).departmentId"
-                  :data="departmentTree" :render-after-expand="false" check-strictly="true"
+                  :data="departmentTree" :render-after-expand="false" check-strictly
                   @change="loadProjects"
                 />
               </el-form-item>
