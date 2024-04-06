@@ -1,14 +1,14 @@
 <route lang="yaml">
 meta:
   enabled: false
-    </route>
+</route>
 
 <script lang="ts">
-import { ElMessage } from 'element-plus'
-import api from '@/api'
-import useUserStore from '@/store/modules/user'
+import { ElMessage } from "element-plus";
+import api from "@/api";
+import useUserStore from "@/store/modules/user";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 export default {
   data() {
@@ -22,77 +22,84 @@ export default {
         totalPage: 0,
       },
       showEditDialog: false,
-      dialogTitle: '',
-      dialogType: '',
+      dialogTitle: "",
+      dialogType: "",
       batchBtnEnable: false,
       search: {
         pageSize: 20,
         pageIndex: 1,
-        sortBy: 'createTime',
-        sortType: 'desc',
-        queryParams: {
-        },
+        sortBy: "createTime",
+        sortType: "desc",
+        queryParams: {},
       },
 
-      departmentTree: {
-
-      },
+      departmentTree: [],
       listProjects: [],
       listUsers: [],
       selectedRoles: [],
       confirmResultItems: [],
       selectedRows: [],
-      editDetail: { },
+      editDetail: {},
       editFieldRules: {
-        name: [{ required: true, message: '用户姓名必填', trigger: 'blur' }],
-        account: [{ required: true, message: '用户账号必填', trigger: 'blur' }],
+        name: [{ required: true, message: "用户姓名必填", trigger: "blur" }],
+        account: [{ required: true, message: "用户账号必填", trigger: "blur" }],
       },
-    }
+    };
   },
-  computed: {
-
-  },
+  computed: {},
   mounted() {
-    this.resetSearch()
-    this.getColumnFields()
-    this.loadUserList()
-    this.loadProjects()
-    this.loadConfirmResultItems()
-    this.loadDepartmentTree()
+    this.resetSearch();
+    this.getColumnFields();
+    this.loadUserList();
+    this.loadProjects();
+    this.loadConfirmResultItems();
+    this.loadDepartmentTree();
   },
   methods: {
     loadUserList() {
-      api.get('server/user/getAllUserDetails').then((res) => {
-        this.listUsers = res.data
-      })
+      api.get("server/user/getAllUserDetails").then((res) => {
+        this.listUsers = res.data;
+        // console.log("getAllUserDetails: ", this.listUsers);
+      });
     },
 
     loadProjects() {
-      api.get(`server/project/queryProjectInDept?deptId=${(this.search.queryParams as any).departmentId}`).then((res) => {
-        this.listProjects = res.data
-      })
+      api
+        .get(
+          `server/project/queryProjectInDept?deptId=${
+            (this.search.queryParams as any).departmentId
+          }`
+        )
+        .then((res) => {
+          this.listProjects = res.data;
+          // console.log("queryProjectInDept: ", this.listProjects);
+        });
     },
 
     loadConfirmResultItems() {
-      api.get('server/column/queryConfirmResultDictItems').then((res) => {
-        this.confirmResultItems = res.data
-      })
+      api.get("server/column/queryConfirmResultDictItems").then((res) => {
+        this.confirmResultItems = res.data;
+        // console.log("queryConfirmResultDictItems: ", this.confirmResultItems);
+      });
     },
 
     getColumnFields() {
-      api.get('server/column/queryColumns').then((res) => {
-        this.columnFields = res.data
-      })
+      api.get("server/column/queryColumns").then((res) => {
+        this.columnFields = res.data;
+        // console.log("queryColumns: ", this.columnFields);
+      });
     },
     loadDepartmentTree() {
-      api.get('server/dept/getDeptTree').then((res) => {
-        this.departmentTree = res.data
-      })
+      api.get("server/dept/getDeptTree").then((res) => {
+        this.departmentTree = res.data;
+        // console.log("getDeptTree: ", this.departmentTree);
+      });
     },
     clickSearch() {
-      api.post('/server/comment/queryComments', this.search).then((res) => {
-        this.commentsData = res.data
-      })
+      api.post("/server/comment/queryComments", this.search).then((res) => {
+        this.commentsData = res.data;
+        // console.log("queryComments: ", this.commentsData);
+      });
     },
     resetSearch() {
       this.search.queryParams = {
@@ -101,112 +108,117 @@ export default {
         departmentId: null,
         realConfirmUser: null,
         assignConfirmUser: userStore.account,
-        confirmResult: 'unconfirmed',
-      }
-      this.clickSearch()
+        confirmResult: "unconfirmed",
+      };
+      this.clickSearch();
     },
     handleSizeChange(val: number) {
-      this.search.pageSize = val
-      this.clickSearch()
+      this.search.pageSize = val;
+      this.clickSearch();
     },
     handleCurrentChange(val: number) {
-      this.search.pageIndex = val
-      this.clickSearch()
+      this.search.pageIndex = val;
+      this.clickSearch();
     },
-    getSelectedRows(val:any) {
-      this.selectedRows = val
+    getSelectedRows(val: any) {
+      this.selectedRows = val;
       if (this.selectedRows && this.selectedRows.length !== 0) {
-        this.batchBtnEnable = true
-      }
-      else {
-        this.batchBtnEnable = false
+        this.batchBtnEnable = true;
+      } else {
+        this.batchBtnEnable = false;
       }
     },
 
-    viewSingle(val:any) {
-      this.showEditDialog = false
-      api.get(`server/comment/initViewReqBody?identifier=${val.identifier}`).then((resp:any) => {
-        this.editDetail = resp.data
-
-        this.dialogTitle = '评审意见详情'
-        this.dialogType = 'VIEW'
-        this.showEditDialog = true
-      }).catch((reason) => {
-        ElMessage({
-          type: 'error',
-          message: `编辑失败：${reason}`,
+    viewSingle(val: any) {
+      this.showEditDialog = false;
+      api
+        .get(`server/comment/initViewReqBody?identifier=${val.identifier}`)
+        .then((resp: any) => {
+          this.editDetail = resp.data;
+          // console.log("initViewReqBody: ", this.editDetail);
+          this.dialogTitle = "评审意见详情";
+          this.dialogType = "VIEW";
+          this.showEditDialog = true;
         })
-      })
+        .catch((reason) => {
+          ElMessage({
+            type: "error",
+            message: `编辑失败：${reason}`,
+          });
+        });
     },
     saveOperation() {
-      (this.$refs.editDetailForm as any).validate((valid:any) => {
+      (this.$refs.editDetailForm as any).validate((valid: any) => {
         if (!valid) {
           ElMessage({
-            type: 'error',
-            message: '参数内容填写有误，请检查',
-          })
-        }
-        else {
-          let reqUrl
-          if (this.dialogType === 'CONFIRM') {
-            reqUrl = 'server/comment/confirmComment'
-          }
-          else {
+            type: "error",
+            message: "参数内容填写有误，请检查",
+          });
+        } else {
+          let reqUrl;
+          if (this.dialogType === "CONFIRM") {
+            reqUrl = "server/comment/confirmComment";
+          } else {
             ElMessage({
-              type: 'error',
-              message: '请求操作类型不合法',
-            })
-            return
+              type: "error",
+              message: "请求操作类型不合法",
+            });
+            return;
           }
 
-          api.post(reqUrl, this.editDetail).then((resp:any) => {
+          api.post(reqUrl, this.editDetail).then((resp: any) => {
             if (resp.code === 0) {
               ElMessage({
-                type: 'success',
-                message: '保存成功',
-              })
-              this.showEditDialog = false
-              this.clickSearch()
-            }
-            else {
+                type: "success",
+                message: "保存成功",
+              });
+              this.showEditDialog = false;
+              this.clickSearch();
+            } else {
               ElMessage({
-                type: 'error',
+                type: "error",
                 message: `编辑失败：${resp.message}`,
-              })
+              });
             }
-          })
+          });
         }
-      })
+      });
     },
     cancelEditOperation() {
-      this.showEditDialog = false
+      this.showEditDialog = false;
     },
 
     cancelCreateOperation() {
-      this.showEditDialog = false
+      this.showEditDialog = false;
     },
-    confirmSingle(val:any) {
-      this.showEditDialog = false
-      api.get(`server/comment/initConfirmReqBody?identifier=${val.identifier}`).then((resp) => {
-        this.editDetail = resp.data
-        this.dialogTitle = '评审意见确认'
-        this.dialogType = 'CONFIRM'
-        this.showEditDialog = true
-      }).catch((reason) => {
-        ElMessage({
-          type: 'error',
-          message: `编辑失败：${reason}`,
+    confirmSingle(val: any) {
+      this.showEditDialog = false;
+      api
+        .get(`server/comment/initConfirmReqBody?identifier=${val.identifier}`)
+        .then((resp) => {
+          this.editDetail = resp.data;
+          console.log("initConfirmReqBody: ", this.editDetail);
+          this.dialogTitle = "评审意见确认";
+          this.dialogType = "CONFIRM";
+          this.showEditDialog = true;
         })
-      })
+        .catch((reason) => {
+          ElMessage({
+            type: "error",
+            message: `编辑失败：${reason}`,
+          });
+        });
     },
   },
-
-}
+};
 </script>
 
 <template>
   <div>
-    <page-header title="我的待办" content="本页面展示所有等待您确认处理的评审意见信息，您可以点击查看或者执行确认。" />
+    <page-header
+      title="我的待办"
+      content="本页面展示所有等待您确认处理的评审意见信息，您可以点击查看或者执行确认。"
+    />
 
     <page-main title="搜索条件">
       <search-bar>
@@ -214,12 +226,21 @@ export default {
           <el-row>
             <el-col :span="6">
               <el-form-item label="唯一ID">
-                <el-input v-model="(search.queryParams as any).identifier" placeholder="输入评审意见唯一ID进行查询" clearable />
+                <el-input
+                  v-model="(search.queryParams as any).identifier"
+                  placeholder="输入评审意见唯一ID进行查询"
+                  clearable
+                />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="检视人员">
-                <el-select v-model.trim="(search.queryParams as any).commitUser" placeholder="请输入姓名或账号查询" clearable filterable>
+                <el-select
+                  v-model.trim="(search.queryParams as any).commitUser"
+                  placeholder="请输入姓名或账号查询"
+                  clearable
+                  filterable
+                >
                   <el-option
                     v-for="(item, index) in listUsers"
                     :key="(item as any).account"
@@ -233,14 +254,21 @@ export default {
               <el-form-item label="归属部门">
                 <el-tree-select
                   v-model="(search.queryParams as any).departmentId"
-                  :data="departmentTree" :render-after-expand="false" check-strictly="true"
+                  :data="departmentTree"
+                  :render-after-expand="false"
+                  check-strictly
                   @change="loadProjects"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="归属项目">
-                <el-select v-model.trim="(search.queryParams as any).projectId" placeholder="请选择" clearable filterable>
+                <el-select
+                  v-model.trim="(search.queryParams as any).projectId"
+                  placeholder="请选择"
+                  clearable
+                  filterable
+                >
                   <el-option
                     v-for="(item, index) in listProjects"
                     :key="(item as any).id"
@@ -261,16 +289,20 @@ export default {
               </template>
               查询
             </el-button>
-            <el-button @click="resetSearch">
-              重置
-            </el-button>
+            <el-button @click="resetSearch"> 重置 </el-button>
           </el-form-item>
         </el-form>
       </search-bar>
     </page-main>
 
     <page-main>
-      <el-table border highlight-current-row :data="commentsData.list" height="100%" @selection-change="getSelectedRows">
+      <el-table
+        border
+        highlight-current-row
+        :data="commentsData.list"
+        height="100%"
+        @selection-change="getSelectedRows"
+      >
         <el-table-column type="selection" width="55" />
         <template v-for="(col, idx) in columnFields">
           <el-table-column
@@ -307,30 +339,46 @@ export default {
     </page-main>
 
     <el-dialog v-model="showEditDialog" :title="dialogTitle">
-      <el-form ref="editDetailForm" :model="editDetail" size="default" label-width="120px" :rules="editFieldRules">
+      <el-form
+        ref="editDetailForm"
+        :model="editDetail"
+        size="default"
+        label-width="120px"
+        :rules="editFieldRules"
+      >
         <template v-for="(column, idx) in (editDetail as any).fieldModelList">
           <div v-if="column.show">
             <el-form-item v-if="column.inputType == 'TEXT'" :label="column.showName">
-              <el-input v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :disabled="column.editable === false" />
+              <el-input
+                v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
+                :disabled="column.editable === false"
+              />
             </el-form-item>
             <el-form-item v-if="column.inputType == 'COMBO_BOX'" :label="column.showName">
-              <el-select v-model="(editDetail as any).fieldModelList[idx].valuePair" :disabled="column.editable === false" filterable>
+              <el-select
+                v-model="(editDetail as any).fieldModelList[idx].valuePair"
+                :disabled="column.editable === false"
+                filterable
+              >
                 <template v-for="item in column.enumValues">
                   <el-option :label="item.showName" :value="item" />
                 </template>
               </el-select>
             </el-form-item>
             <el-form-item v-if="column.inputType == 'DATE'" :label="column.showName">
-              <el-date-picker :disabled="column.editable === false"
-                  v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
-                  type="date"
-                  value-format="YYYY-MM-DD"
-                  placeholder="点击选择日期"
+              <el-date-picker
+                :disabled="column.editable === false"
+                v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="点击选择日期"
               />
             </el-form-item>
             <el-form-item v-if="column.inputType == 'TEXTAREA'" :label="column.showName">
               <el-input
-                v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :rows="5" :disabled="column.editable === false"
+                v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
+                :rows="5"
+                :disabled="column.editable === false"
                 type="textarea"
               />
             </el-form-item>
@@ -339,34 +387,30 @@ export default {
       </el-form>
       <template v-if="dialogType !== 'VIEW'" #footer>
         <span class="dialog-footer">
-          <el-button @click="cancelEditOperation">
-            取消
-          </el-button>
-          <el-button type="primary" @click="saveOperation">
-            保存
-          </el-button>
+          <el-button @click="cancelEditOperation"> 取消 </el-button>
+          <el-button type="primary" @click="saveOperation"> 保存 </el-button>
         </span>
       </template>
     </el-dialog>
   </div>
 </template>
 
-    <style lang="scss" scoped>
-    .page-common-style {
-        padding: 20px;
-        margin: 20px;
-    }
+<style lang="scss" scoped>
+.page-common-style {
+  padding: 20px;
+  margin: 20px;
+}
 
-    .pageination-style {
-        margin-top: 20px;
-    }
+.pageination-style {
+  margin-top: 20px;
+}
 
-    .button-group {
-        margin-bottom: 20px;
-    }
+.button-group {
+  margin-bottom: 20px;
+}
 
-    .tag-style {
-        margin-left: 5px;
-        margin-right: 5px;
-    }
-    </style>
+.tag-style {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+</style>

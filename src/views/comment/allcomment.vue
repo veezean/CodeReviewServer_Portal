@@ -1,11 +1,11 @@
 <route lang="yaml">
 meta:
   enabled: false
-  </route>
+</route>
 
 <script lang="ts">
-import { ElMessage, ElMessageBox } from 'element-plus'
-import api from '@/api'
+import { ElMessage, ElMessageBox } from "element-plus";
+import api from "@/api";
 
 export default {
   data() {
@@ -19,77 +19,78 @@ export default {
         totalPage: 0,
       },
       showEditDialog: false,
-      dialogTitle: '',
-      dialogType: '',
+      dialogTitle: "",
+      dialogType: "",
       batchBtnEnable: false,
       search: {
         pageSize: 20,
         pageIndex: 1,
-        sortBy: 'createTime',
-        sortType: 'desc',
-        queryParams: {
-        },
+        sortBy: "createTime",
+        sortType: "desc",
+        queryParams: {},
       },
 
-      departmentTree: {
-
-      },
+      departmentTree: [],
       listProjects: [],
       listUsers: [],
       selectedRoles: [],
       confirmResultItems: [],
       selectedRows: [],
-      editDetail: { },
+      editDetail: {},
       editFieldRules: {
-        name: [{ required: true, message: '用户姓名必填', trigger: 'blur' }],
-        account: [{ required: true, message: '用户账号必填', trigger: 'blur' }],
+        name: [{ required: true, message: "用户姓名必填", trigger: "blur" }],
+        account: [{ required: true, message: "用户账号必填", trigger: "blur" }],
       },
-    }
+    };
   },
-  computed: {
-
-  },
+  computed: {},
   mounted() {
-    this.resetSearch()
-    this.getColumnFields()
-    this.loadUserList()
-    this.loadProjects()
-    this.loadConfirmResultItems()
-    this.loadDepartmentTree()
+    this.resetSearch();
+    this.getColumnFields();
+    this.loadUserList();
+    this.loadProjects();
+    this.loadConfirmResultItems();
+    this.loadDepartmentTree();
   },
   methods: {
     loadUserList() {
-      api.get('server/user/getAllUserDetails').then((res) => {
-        this.listUsers = res.data
-      })
+      api.get("server/user/getAllUserDetails").then((res) => {
+        this.listUsers = res.data;
+      });
     },
 
     loadProjects() {
-      api.get(`server/project/queryProjectInDept?deptId=${(this.search.queryParams as any).departmentId}`).then((res) => {
-        this.listProjects = res.data
-      })
+      api
+        .get(
+          `server/project/queryProjectInDept?deptId=${
+            (this.search.queryParams as any).departmentId
+          }`
+        )
+        .then((res) => {
+          this.listProjects = res.data;
+        });
     },
 
     loadConfirmResultItems() {
-      api.get('server/column/queryConfirmResultDictItems').then((res) => {
-        this.confirmResultItems = res.data
-      })
+      api.get("server/column/queryConfirmResultDictItems").then((res) => {
+        this.confirmResultItems = res.data;
+      });
     },
 
     getColumnFields() {
-      api.get('server/column/queryColumns').then((res) => {
-        this.columnFields = res.data
-      })
+      api.get("server/column/queryColumns").then((res) => {
+        this.columnFields = res.data;
+      });
     },
     loadDepartmentTree() {
-      api.get('server/dept/getDeptTree').then((res) => {
-        this.departmentTree = res.data
-      })
+      api.get("server/dept/getDeptTree").then((res) => {
+        this.departmentTree = res.data;
+      });
     },
     clickSearch() {
-      api.post('/server/comment/queryComments', this.search).then((res) => {
-        this.commentsData = res.data
-      })
+      api.post("/server/comment/queryComments", this.search).then((res) => {
+        this.commentsData = res.data;
+      });
     },
     resetSearch() {
       this.search.queryParams = {
@@ -100,212 +101,210 @@ export default {
         realConfirmUser: null,
         assignConfirmUser: null,
         confirmResult: null,
-      }
-      this.clickSearch()
+      };
+      this.clickSearch();
     },
     handleSizeChange(val: number) {
-      this.search.pageSize = val
-      this.clickSearch()
+      this.search.pageSize = val;
+      this.clickSearch();
     },
     handleCurrentChange(val: number) {
-      this.search.pageIndex = val
-      this.clickSearch()
+      this.search.pageIndex = val;
+      this.clickSearch();
     },
-    getSelectedRows(val:any) {
-      this.selectedRows = val
+    getSelectedRows(val: any) {
+      this.selectedRows = val;
       if (this.selectedRows && this.selectedRows.length !== 0) {
-        this.batchBtnEnable = true
-      }
-      else {
-        this.batchBtnEnable = false
+        this.batchBtnEnable = true;
+      } else {
+        this.batchBtnEnable = false;
       }
     },
-    deleteSelection(val:any) {
-      ElMessageBox.confirm(
-        '确定要删除所选记录吗？此操作不可恢复！',
-        'Warning',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        },
-      )
+    deleteSelection(val: any) {
+      ElMessageBox.confirm("确定要删除所选记录吗？此操作不可恢复！", "Warning", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(() => {
-          const identifiers = []
+          const identifiers = [];
           for (let index = 0; index < this.selectedRows.length; index++) {
-            const element:any = this.selectedRows[index]
-            identifiers.push(element.identifier)
+            const element: any = this.selectedRows[index];
+            identifiers.push(element.identifier);
           }
-          api.get(`server/comment/deleteComments?identifiers=${identifiers}`).then((resp:any) => {
-            if (resp.code === 0) {
-              ElMessage({
-                type: 'success',
-                message: '删除成功',
-              })
-            }
-            else {
-              ElMessage({
-                type: 'error',
-                message: `删除失败：${resp.message}`,
-              })
-            }
-            this.clickSearch()
-          })
+          api
+            .get(`server/comment/deleteComments?identifiers=${identifiers}`)
+            .then((resp: any) => {
+              if (resp.code === 0) {
+                ElMessage({
+                  type: "success",
+                  message: "删除成功",
+                });
+              } else {
+                ElMessage({
+                  type: "error",
+                  message: `删除失败：${resp.message}`,
+                });
+              }
+              this.clickSearch();
+            });
         })
-        .catch(() => {
-
-        })
+        .catch(() => {});
     },
     deleteSingle(val: { identifier: any }) {
-      ElMessageBox.confirm(
-        '确定要删除此记录吗？此操作不可恢复！',
-        'Warning',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        },
-      )
+      ElMessageBox.confirm("确定要删除此记录吗？此操作不可恢复！", "Warning", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(() => {
-          api.get(`server/comment/deleteComment?identifier=${val.identifier}`).then((resp:any) => {
-            if (resp.code === 0) {
-              ElMessage({
-                type: 'success',
-                message: '删除成功',
-              })
-            }
-            else {
-              ElMessage({
-                type: 'error',
-                message: `删除失败：${resp.message}`,
-              })
-            }
-            this.clickSearch()
-          })
+          api
+            .get(`server/comment/deleteComment?identifier=${val.identifier}`)
+            .then((resp: any) => {
+              if (resp.code === 0) {
+                ElMessage({
+                  type: "success",
+                  message: "删除成功",
+                });
+              } else {
+                ElMessage({
+                  type: "error",
+                  message: `删除失败：${resp.message}`,
+                });
+              }
+              this.clickSearch();
+            });
         })
-        .catch(() => {
-
-        })
+        .catch(() => {});
     },
-    viewSingle(val:any) {
-      this.showEditDialog = false
-      api.get(`server/comment/initViewReqBody?identifier=${val.identifier}`).then((resp:any) => {
-        this.editDetail = resp.data
+    viewSingle(val: any) {
+      this.showEditDialog = false;
+      api
+        .get(`server/comment/initViewReqBody?identifier=${val.identifier}`)
+        .then((resp: any) => {
+          this.editDetail = resp.data;
 
-        this.dialogTitle = '评审意见详情'
-        this.dialogType = 'VIEW'
-        this.showEditDialog = true
-      }).catch((reason) => {
-        ElMessage({
-          type: 'error',
-          message: `编辑失败：${reason}`,
+          this.dialogTitle = "评审意见详情";
+          this.dialogType = "VIEW";
+          this.showEditDialog = true;
         })
-      })
+        .catch((reason) => {
+          ElMessage({
+            type: "error",
+            message: `编辑失败：${reason}`,
+          });
+        });
     },
-    editSingle(val:any) {
-      this.showEditDialog = false
-      api.get(`server/comment/initEditReqBody?identifier=${val.identifier}`).then((resp:any) => {
-        this.editDetail = resp.data
-        this.dialogTitle = '修改评审意见'
-        this.dialogType = 'EDIT'
-        this.showEditDialog = true
-      }).catch((reason) => {
-        ElMessage({
-          type: 'error',
-          message: `编辑失败：${reason.message}`,
+    editSingle(val: any) {
+      this.showEditDialog = false;
+      api
+        .get(`server/comment/initEditReqBody?identifier=${val.identifier}`)
+        .then((resp: any) => {
+          this.editDetail = resp.data;
+          this.dialogTitle = "修改评审意见";
+          this.dialogType = "EDIT";
+          this.showEditDialog = true;
         })
-      })
+        .catch((reason) => {
+          ElMessage({
+            type: "error",
+            message: `编辑失败：${reason.message}`,
+          });
+        });
     },
     saveOperation() {
-      (this.$refs.editDetailForm as any).validate((valid:any) => {
+      (this.$refs.editDetailForm as any).validate((valid: any) => {
         if (!valid) {
           ElMessage({
-            type: 'error',
-            message: '参数内容填写有误，请检查',
-          })
-        }
-        else {
-          let reqUrl
-          if (this.dialogType === 'CREATE') {
-            reqUrl = 'server/comment/createComment'
-          }
-          else if (this.dialogType === 'EDIT') {
-            reqUrl = 'server/comment/modifyComment'
-          }
-          else if (this.dialogType === 'CONFIRM') {
-            reqUrl = 'server/comment/confirmComment'
-          }
-          else {
+            type: "error",
+            message: "参数内容填写有误，请检查",
+          });
+        } else {
+          let reqUrl;
+          if (this.dialogType === "CREATE") {
+            reqUrl = "server/comment/createComment";
+          } else if (this.dialogType === "EDIT") {
+            reqUrl = "server/comment/modifyComment";
+          } else if (this.dialogType === "CONFIRM") {
+            reqUrl = "server/comment/confirmComment";
+          } else {
             ElMessage({
-              type: 'error',
-              message: '请求操作类型不合法',
-            })
-            return
+              type: "error",
+              message: "请求操作类型不合法",
+            });
+            return;
           }
 
-          api.post(reqUrl, this.editDetail).then((resp:any) => {
+          api.post(reqUrl, this.editDetail).then((resp: any) => {
             if (resp.code === 0) {
               ElMessage({
-                type: 'success',
-                message: '保存成功',
-              })
-              this.showEditDialog = false
-              this.clickSearch()
-            }
-            else {
+                type: "success",
+                message: "保存成功",
+              });
+              this.showEditDialog = false;
+              this.clickSearch();
+            } else {
               ElMessage({
-                type: 'error',
+                type: "error",
                 message: `编辑失败：${resp.message}`,
-              })
+              });
             }
-          })
+          });
         }
-      })
+      });
     },
     cancelEditOperation() {
-      this.showEditDialog = false
+      this.showEditDialog = false;
     },
 
     create() {
-      this.showEditDialog = false
-      api.get('server/comment/initCreateReqBody').then((resp) => {
-        this.editDetail = resp.data
-        this.dialogTitle = '添加评审意见'
-        this.dialogType = 'CREATE'
-        this.showEditDialog = true
-      }).catch((reason) => {
-        ElMessage({
-          type: 'error',
-          message: `编辑失败：${reason}`,
+      this.showEditDialog = false;
+      api
+        .get("server/comment/initCreateReqBody")
+        .then((resp) => {
+          this.editDetail = resp.data;
+          this.dialogTitle = "添加评审意见";
+          this.dialogType = "CREATE";
+          this.showEditDialog = true;
         })
-      })
+        .catch((reason) => {
+          ElMessage({
+            type: "error",
+            message: `编辑失败：${reason}`,
+          });
+        });
     },
 
     cancelCreateOperation() {
-      this.showEditDialog = false
+      this.showEditDialog = false;
     },
-    confirmSingle(val:any) {
-      this.showEditDialog = false
-      api.get(`server/comment/initConfirmReqBody?identifier=${val.identifier}`).then((resp) => {
-        this.editDetail = resp.data
-        this.dialogTitle = '评审意见确认'
-        this.dialogType = 'CONFIRM'
-        this.showEditDialog = true
-      }).catch((reason) => {
-        ElMessage({
-          type: 'error',
-          message: `编辑失败：${reason}`,
+    confirmSingle(val: any) {
+      this.showEditDialog = false;
+      api
+        .get(`server/comment/initConfirmReqBody?identifier=${val.identifier}`)
+        .then((resp) => {
+          this.editDetail = resp.data;
+          this.dialogTitle = "评审意见确认";
+          this.dialogType = "CONFIRM";
+          this.showEditDialog = true;
         })
-      })
+        .catch((reason) => {
+          ElMessage({
+            type: "error",
+            message: `编辑失败：${reason}`,
+          });
+        });
     },
   },
-
-}
+};
 </script>
 
 <template>
   <div>
-    <page-header title="全部评审数据" content="本页面提供系统内全部评审数据的管理能力，供管理角色进行统一查看、维护操作。" />
+    <page-header
+      title="全部评审数据"
+      content="本页面提供系统内全部评审数据的管理能力，供管理角色进行统一查看、维护操作。"
+    />
 
     <page-main title="搜索条件">
       <search-bar>
@@ -313,7 +312,12 @@ export default {
           <el-row>
             <el-col :span="6">
               <el-form-item label="检视人员">
-                <el-select v-model.trim="(search.queryParams as any).commitUser" placeholder="请输入姓名或账号查询" clearable filterable>
+                <el-select
+                  v-model.trim="(search.queryParams as any).commitUser"
+                  placeholder="请输入姓名或账号查询"
+                  clearable
+                  filterable
+                >
                   <el-option
                     v-for="(item, index) in listUsers"
                     :key="(item as any).account"
@@ -325,7 +329,12 @@ export default {
             </el-col>
             <el-col :span="6">
               <el-form-item label="指派确认人员">
-                <el-select v-model.trim="(search.queryParams as any).assignConfirmUser" placeholder="请输入姓名或账号查询" clearable filterable>
+                <el-select
+                  v-model.trim="(search.queryParams as any).assignConfirmUser"
+                  placeholder="请输入姓名或账号查询"
+                  clearable
+                  filterable
+                >
                   <el-option
                     v-for="(item, index) in listUsers"
                     :key="(item as any).account"
@@ -337,7 +346,12 @@ export default {
             </el-col>
             <el-col :span="6">
               <el-form-item label="实际确认人员">
-                <el-select v-model.trim="(search.queryParams as any).realConfirmUser" placeholder="请输入姓名或账号查询" clearable filterable>
+                <el-select
+                  v-model.trim="(search.queryParams as any).realConfirmUser"
+                  placeholder="请输入姓名或账号查询"
+                  clearable
+                  filterable
+                >
                   <el-option
                     v-for="(item, index) in listUsers"
                     :key="(item as any).account"
@@ -349,7 +363,11 @@ export default {
             </el-col>
             <el-col :span="6">
               <el-form-item label="确认结果">
-                <el-select v-model.trim="(search.queryParams as any).confirmResult" placeholder="输入评审意见的确认状态" clearable>
+                <el-select
+                  v-model.trim="(search.queryParams as any).confirmResult"
+                  placeholder="输入评审意见的确认状态"
+                  clearable
+                >
                   <el-option
                     v-for="(item, index) in confirmResultItems"
                     :key="(item as any).value"
@@ -363,21 +381,32 @@ export default {
           <el-row>
             <el-col :span="6">
               <el-form-item label="唯一ID">
-                <el-input v-model="(search.queryParams as any).identifier" placeholder="输入评审意见唯一ID进行查询" clearable />
+                <el-input
+                  v-model="(search.queryParams as any).identifier"
+                  placeholder="输入评审意见唯一ID进行查询"
+                  clearable
+                />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="归属部门">
                 <el-tree-select
                   v-model="(search.queryParams as any).departmentId"
-                  :data="departmentTree" :render-after-expand="false" check-strictly="true"
+                  :data="departmentTree"
+                  :render-after-expand="false"
+                  check-strictly
                   @change="loadProjects"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="归属项目">
-                <el-select v-model.trim="(search.queryParams as any).projectId" placeholder="请选择" clearable filterable>
+                <el-select
+                  v-model.trim="(search.queryParams as any).projectId"
+                  placeholder="请选择"
+                  clearable
+                  filterable
+                >
                   <el-option
                     v-for="(item, index) in listProjects"
                     :key="(item as any).id"
@@ -398,9 +427,7 @@ export default {
               </template>
               查询
             </el-button>
-            <el-button @click="resetSearch">
-              重置
-            </el-button>
+            <el-button @click="resetSearch"> 重置 </el-button>
           </el-form-item>
         </el-form>
       </search-bar>
@@ -426,7 +453,13 @@ export default {
         </el-button>
       </div>
 
-      <el-table border highlight-current-row :data="commentsData.list" height="100%" @selection-change="getSelectedRows">
+      <el-table
+        border
+        highlight-current-row
+        :data="commentsData.list"
+        height="100%"
+        @selection-change="getSelectedRows"
+      >
         <el-table-column type="selection" width="55" />
         <template v-for="(col, idx) in columnFields">
           <el-table-column
@@ -469,30 +502,46 @@ export default {
     </page-main>
 
     <el-dialog v-model="showEditDialog" :title="dialogTitle">
-      <el-form ref="editDetailForm" :model="editDetail" size="default" label-width="120px" :rules="editFieldRules">
+      <el-form
+        ref="editDetailForm"
+        :model="editDetail"
+        size="default"
+        label-width="120px"
+        :rules="editFieldRules"
+      >
         <template v-for="(column, idx) in (editDetail as any).fieldModelList">
           <div v-if="column.show">
             <el-form-item v-if="column.inputType == 'TEXT'" :label="column.showName">
-              <el-input v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :disabled="column.editable === false" />
+              <el-input
+                v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
+                :disabled="column.editable === false"
+              />
             </el-form-item>
             <el-form-item v-if="column.inputType == 'COMBO_BOX'" :label="column.showName">
-              <el-select v-model="(editDetail as any).fieldModelList[idx].valuePair" :disabled="column.editable === false" filterable>
+              <el-select
+                v-model="(editDetail as any).fieldModelList[idx].valuePair"
+                :disabled="column.editable === false"
+                filterable
+              >
                 <template v-for="item in column.enumValues">
                   <el-option :label="item.showName" :value="item" />
                 </template>
               </el-select>
             </el-form-item>
             <el-form-item v-if="column.inputType == 'DATE'" :label="column.showName">
-              <el-date-picker :disabled="column.editable === false"
-                  v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
-                  type="date"
-                  value-format="YYYY-MM-DD"
-                  placeholder="点击选择日期"
+              <el-date-picker
+                :disabled="column.editable === false"
+                v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="点击选择日期"
               />
             </el-form-item>
             <el-form-item v-if="column.inputType == 'TEXTAREA'" :label="column.showName">
               <el-input
-                v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :rows="5" :disabled="column.editable === false"
+                v-model="(editDetail as any).fieldModelList[idx].valuePair.value"
+                :rows="5"
+                :disabled="column.editable === false"
                 type="textarea"
               />
             </el-form-item>
@@ -501,34 +550,30 @@ export default {
       </el-form>
       <template v-if="dialogType !== 'VIEW'" #footer>
         <span class="dialog-footer">
-          <el-button @click="cancelEditOperation">
-            取消
-          </el-button>
-          <el-button type="primary" @click="saveOperation">
-            保存
-          </el-button>
+          <el-button @click="cancelEditOperation"> 取消 </el-button>
+          <el-button type="primary" @click="saveOperation"> 保存 </el-button>
         </span>
       </template>
     </el-dialog>
   </div>
 </template>
 
-  <style lang="scss" scoped>
-  .page-common-style {
-      padding: 20px;
-      margin: 20px;
-  }
+<style lang="scss" scoped>
+.page-common-style {
+  padding: 20px;
+  margin: 20px;
+}
 
-  .pageination-style {
-      margin-top: 20px;
-  }
+.pageination-style {
+  margin-top: 20px;
+}
 
-  .button-group {
-      margin-bottom: 20px;
-  }
+.button-group {
+  margin-bottom: 20px;
+}
 
-  .tag-style {
-      margin-left: 5px;
-      margin-right: 5px;
-  }
-  </style>
+.tag-style {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+</style>
