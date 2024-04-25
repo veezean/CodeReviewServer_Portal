@@ -44,6 +44,7 @@ export default {
         name: [{ required: true, message: '用户姓名必填', trigger: 'blur' }],
         account: [{ required: true, message: '用户账号必填', trigger: 'blur' }],
       },
+      languageType:'java',
     }
   },
   computed: {
@@ -120,6 +121,23 @@ export default {
         this.batchBtnEnable = false
       }
     },
+    exportData(val:any) {
+      api.post('/server/comment/exportComments', this.search, {responseType:'blob'}).then((res) => {
+          let  fileName = "review_comment_" + Date.now() + ".xlsx";
+
+          let blob = new Blob([res]);
+          if ('msSaveOrOpenBlob' in navigator) {
+            window.navigator.msSaveOrOpenBlob(blob, fileName);
+          } else {
+            let url = window.URL.createObjectURL(blob); // 创建 url 并指向 blob
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url); // 释放该 url
+          }
+      })
+    },
     deleteSelection(val:any) {
       ElMessageBox.confirm(
         '确定要删除所选记录吗？此操作不可恢复！',
@@ -195,6 +213,9 @@ export default {
         this.dialogTitle = '评审意见详情'
         this.dialogType = 'VIEW'
         this.showEditDialog = true
+
+        this.languageType = (this.editDetail as any).codeType
+
       }).catch((reason) => {
         ElMessage({
           type: 'error',
@@ -424,6 +445,14 @@ export default {
           </template>
           删除所选
         </el-button>
+        <el-button type="default" @click="exportData">
+          <template #icon>
+            <el-icon>
+              <svg-icon name="ep:download" />
+            </el-icon>
+          </template>
+          数据导出
+        </el-button>
       </div>
 
       <el-table border highlight-current-row :data="commentsData.list" height="100%" @selection-change="getSelectedRows">
@@ -490,7 +519,18 @@ export default {
                   placeholder="点击选择日期"
               />
             </el-form-item>
-            <el-form-item v-if="column.inputType == 'TEXTAREA'" :label="column.showName">
+            <el-form-item v-if="column.inputType == 'TEXTAREA' && column.code == 'content' && column.editable === false" :label="column.showName">
+                <div style="width: 100%;line-height: 30px;padding: 5px;">
+                  <highlightjs :language="languageType" :code="(editDetail as any).fieldModelList[idx].valuePair.value"></highlightjs>
+                </div>
+            </el-form-item>
+            <el-form-item v-if="column.inputType == 'TEXTAREA' && column.code == 'content' && column.editable === true" :label="column.showName">
+              <el-input
+                v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :rows="5" :disabled="column.editable === false"
+                type="textarea"
+              />
+            </el-form-item>
+            <el-form-item v-if="column.inputType == 'TEXTAREA' && column.code != 'content'" :label="column.showName">
               <el-input
                 v-model="(editDetail as any).fieldModelList[idx].valuePair.value" :rows="5" :disabled="column.editable === false"
                 type="textarea"
