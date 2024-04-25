@@ -389,7 +389,7 @@ export default {
             </el-col>
             <el-col :span="6">
               <el-form-item label="归属部门">
-                <el-tree-select
+                <el-tree-select clearable
                   v-model="(search.queryParams as any).departmentId"
                   :data="departmentTree" :render-after-expand="false" check-strictly="true"
                   @change="loadProjects"
