@@ -41,31 +41,10 @@ function userCommand(command: 'home' | 'setting' | 'hotkeys' | 'logout') {
 <template>
   <div class="tools">
     <div class="buttons">
-      <span v-if="settingsStore.settings.navSearch.enable" class="item" @click="eventBus.emit('global-search-toggle')">
-        <el-icon>
-          <svg-icon name="ep:search" />
-        </el-icon>
-      </span>
-      <span v-if="settingsStore.mode === 'pc' && settingsStore.settings.toolbar.enableFullscreen" class="item" @click="toggle">
-        <el-icon>
-          <svg-icon :name="isFullscreen ? 'fullscreen-exit' : 'fullscreen'" />
-        </el-icon>
-      </span>
-      <span v-if="settingsStore.settings.toolbar.enablePageReload" class="item" @click="mainPage.reload()">
-        <el-icon>
-          <svg-icon name="ep:refresh-right" />
-        </el-icon>
-      </span>
-      <span v-if="settingsStore.settings.toolbar.enableColorScheme" class="item" @click="settingsStore.setColorScheme(settingsStore.settings.app.colorScheme === 'dark' ? 'light' : 'dark')">
-        <el-icon>
-          <svg-icon v-show="settingsStore.settings.app.colorScheme === 'light'" name="ep:sunny" />
-          <svg-icon v-show="settingsStore.settings.app.colorScheme === 'dark'" name="ep:moon" />
-        </el-icon>
-      </span>
-      <span v-if="settingsStore.settings.toolbar.enableAppSetting" class="item" @click="eventBus.emit('global-theme-toggle')">
-        <el-icon>
-          <svg-icon name="ep:setting" />
-        </el-icon>
+      <span class="user-container" @click="eventBus.emit('global-version-help')">
+        <div class="user-wrapper">
+          <el-tag type="danger">版本&帮助</el-tag>
+        </div>
       </span>
     </div>
     <el-dropdown class="user-container" size="default" @command="userCommand">

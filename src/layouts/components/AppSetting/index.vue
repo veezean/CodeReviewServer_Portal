@@ -4,11 +4,13 @@ import { ElMessage } from 'element-plus'
 import eventBus from '@/utils/eventBus'
 import useSettingsStore from '@/store/modules/settings'
 import useMenuStore from '@/store/modules/menu'
+import useUserStore from '@/store/modules/user'
 
 const route = useRoute()
 
 const settingsStore = useSettingsStore()
 const menuStore = useMenuStore()
+const userStore = useUserStore()
 
 const isShow = ref(false)
 
@@ -22,7 +24,7 @@ watch(() => settingsStore.settings.menu.menuMode, (value) => {
 })
 
 onMounted(() => {
-  eventBus.on('global-theme-toggle', () => {
+  eventBus.on('global-version-help', () => {
     isShow.value = !isShow.value
   })
 })
@@ -38,277 +40,64 @@ watch(copied, (val) => {
 function handleCopy() {
   copy(JSON.stringify(settingsStore.settings, null, 2))
 }
+
+function open(url: string) {
+  window.open(url, '_blank')
+}
 </script>
 
 <template>
   <div>
-    <el-drawer v-model="isShow" title="应用配置" direction="rtl" :size="360">
-      <el-alert title="应用配置可实时预览效果，但只是临时生效，要想真正作用于项目，可以点击下方的“复制配置”按钮，并将配置粘贴到 src/settings.ts 文件中。同时建议在生产环境隐藏应用配置功能。" type="error" :closable="false" />
-      <el-divider>颜色主题</el-divider>
-      <div class="color-scheme">
-        <div class="switch" :class="settingsStore.settings.app.colorScheme" @click="settingsStore.settings.app.colorScheme = settingsStore.settings.app.colorScheme === 'dark' ? 'light' : 'dark'">
-          <el-icon class="icon">
-            <svg-icon :name="settingsStore.settings.app.colorScheme === 'light' ? 'ep:sunny' : 'ep:moon'" />
-          </el-icon>
-        </div>
-      </div>
-      <el-divider v-if="settingsStore.mode === 'pc'">
-        导航栏模式
-      </el-divider>
-      <div v-if="settingsStore.mode === 'pc'" class="menu-mode">
-        <el-tooltip content="侧边栏模式（含主导航）" placement="top" :show-after="500">
-          <div class="mode mode-side" :class="{ active: settingsStore.settings.menu.menuMode === 'side' }" @click="settingsStore.settings.menu.menuMode = 'side'">
-            <div class="mode-container" />
-            <el-icon>
-              <svg-icon name="ep:check" />
-            </el-icon>
-          </div>
-        </el-tooltip>
-        <el-tooltip content="顶部模式" placement="top" :show-after="500">
-          <div class="mode mode-head" :class="{ active: settingsStore.settings.menu.menuMode === 'head' }" @click="settingsStore.settings.menu.menuMode = 'head'">
-            <div class="mode-container" />
-            <el-icon>
-              <svg-icon name="ep:check" />
-            </el-icon>
-          </div>
-        </el-tooltip>
-        <el-tooltip content="侧边栏模式（不含主导航）" placement="top" :show-after="500">
-          <div class="mode mode-single" :class="{ active: settingsStore.settings.menu.menuMode === 'single' }" @click="settingsStore.settings.menu.menuMode = 'single'">
-            <div class="mode-container" />
-            <el-icon>
-              <svg-icon name="ep:check" />
-            </el-icon>
-          </div>
-        </el-tooltip>
-      </div>
-      <el-divider>导航栏</el-divider>
-      <div class="setting-item">
-        <div class="label">
-          主导航切换跳转
-          <el-tooltip content="开启该功能后，切换主导航时，页面自动跳转至该主导航下，次导航里第一个导航" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.menu.switchMainMenuAndPageJump" :disabled="['single'].includes(settingsStore.settings.menu.menuMode)" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          次导航保持展开一个
-          <el-tooltip content="开启该功能后，次导航只保持单个菜单的展开" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.menu.subMenuUniqueOpened" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          次导航是否折叠
-        </div>
-        <el-switch v-model="settingsStore.settings.menu.subMenuCollapse" />
-      </div>
-      <div v-if="settingsStore.mode === 'pc'" class="setting-item">
-        <div class="label">
-          显示次导航折叠按钮
-        </div>
-        <el-switch v-model="settingsStore.settings.menu.enableSubMenuCollapseButton" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          是否启用快捷键
-        </div>
-        <el-switch v-model="settingsStore.settings.menu.enableHotkeys" :disabled="['single'].includes(settingsStore.settings.menu.menuMode)" />
-      </div>
-      <el-divider>顶栏</el-divider>
-      <div class="setting-item">
-        <div class="label">
-          模式
-        </div>
-        <el-radio-group v-model="settingsStore.settings.topbar.mode" size="small">
-          <el-radio-button label="static">
-            静止
-          </el-radio-button>
-          <el-radio-button label="fixed">
-            固定
-          </el-radio-button>
-          <el-radio-button label="sticky">
-            粘性
-          </el-radio-button>
-        </el-radio-group>
-      </div>
-      <el-divider>工具栏</el-divider>
-      <div v-if="settingsStore.mode === 'pc'" class="setting-item">
-        <div class="label">
-          全屏
-          <el-tooltip content="该功能使用场景极少，用户习惯于通过窗口“最大化”功能来扩大显示区域，以显示更多内容，并且使用 F11 键也可以进入全屏效果" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.toolbar.enableFullscreen" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          页面刷新
-          <el-tooltip content="开启时会阻止原生 F5 键刷新功能，并采用框架提供的刷新模式进行页面刷新" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.toolbar.enablePageReload" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          颜色主题
-          <el-tooltip content="开启后可在明亮/暗黑模式中切换" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.toolbar.enableColorScheme" />
-      </div>
-      <el-divider v-if="settingsStore.mode === 'pc'">
-        面包屑导航
-      </el-divider>
-      <div v-if="settingsStore.mode === 'pc'" class="setting-item">
-        <div class="label">
-          是否启用
-        </div>
-        <el-switch v-model="settingsStore.settings.breadcrumb.enable" />
-      </div>
-      <el-divider>导航搜索</el-divider>
-      <div class="setting-item">
-        <div class="label">
-          是否启用
-          <el-tooltip content="对导航进行快捷搜索" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.navSearch.enable" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          是否启用快捷键
-        </div>
-        <el-switch v-model="settingsStore.settings.navSearch.enableHotkeys" :disabled="!settingsStore.settings.navSearch.enable" />
-      </div>
-      <el-divider>底部版权</el-divider>
-      <div class="setting-item">
-        <div class="label">
-          是否启用
-        </div>
-        <el-switch v-model="settingsStore.settings.copyright.enable" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          日期
-        </div>
-        <el-input v-model="settingsStore.settings.copyright.dates" size="small" :disabled="!settingsStore.settings.copyright.enable" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          公司
-        </div>
-        <el-input v-model="settingsStore.settings.copyright.company" size="small" :disabled="!settingsStore.settings.copyright.enable" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          网址
-        </div>
-        <el-input v-model="settingsStore.settings.copyright.website" size="small" :disabled="!settingsStore.settings.copyright.enable" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          备案
-        </div>
-        <el-input v-model="settingsStore.settings.copyright.beian" size="small" :disabled="!settingsStore.settings.copyright.enable" />
-      </div>
-      <el-divider>主页</el-divider>
-      <div class="setting-item">
-        <div class="label">
-          是否开启
-          <el-tooltip content="该功能开启时，登录成功默认进入主页，反之则默认进入导航栏里第一个导航页面" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.home.enable" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          主页名称
-        </div>
-        <el-input v-model="settingsStore.settings.home.title" size="small" />
-      </div>
-      <el-divider>其它</el-divider>
-      <div class="setting-item">
-        <div class="label">
-          组件尺寸
-          <el-tooltip content="全局设置 Element Plus 组件的默认尺寸大小" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-radio-group v-model="settingsStore.settings.app.elementSize" size="small">
-          <el-radio-button label="large">
-            较大
-          </el-radio-button>
-          <el-radio-button label="default">
-            默认
-          </el-radio-button>
-          <el-radio-button label="small">
-            稍小
-          </el-radio-button>
-        </el-radio-group>
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          是否启用权限
-        </div>
-        <el-switch v-model="settingsStore.settings.app.enablePermission" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          载入进度条
-          <el-tooltip content="该功能开启时，跳转路由会看到页面顶部有进度条" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.app.enableProgress" />
-      </div>
-      <div class="setting-item">
-        <div class="label">
-          动态标题
-          <el-tooltip content="该功能开启时，页面标题会显示当前路由标题，格式为“页面标题 - 网站名称”；关闭时则显示网站名称，网站名称在项目根目录下 .env.* 文件里配置" placement="top">
-            <el-icon>
-              <svg-icon name="ep:question-filled" />
-            </el-icon>
-          </el-tooltip>
-        </div>
-        <el-switch v-model="settingsStore.settings.app.enableDynamicTitle" />
-      </div>
-      <template v-if="isSupported" #footer>
-        <el-button type="primary" @click="handleCopy">
-          <template #icon>
-            <el-icon>
-              <svg-icon name="ep:document-copy" />
-            </el-icon>
-          </template>
-          复制配置
+    <el-drawer v-model="isShow" title="版本&帮助" direction="rtl" :size="600">
+    <page-header title="欢迎使用CodeReview管理系统" />
+      <div style="margin:20px">
+        这是IDEA插件<b class="text-emphasis">CodeReviewHelper</b>配套的服务端管理系统，它可以用于团队协作时的代码检视场景。支持管理检视意见、检视意见确认、数据统计、用户管理、系统配置等功能。
+        <el-button type="primary" size="large" text @click="open('https://mp.weixin.qq.com/s/2IQVa1ROvXeYYFECKlZAhA')">
+          了解更多
         </el-button>
-      </template>
+      </div>
+      <el-divider>版本信息</el-divider>
+      <div style="margin-left:20px;">
+        <div>
+          服务端版本：{{ userStore.version }}
+          <el-button type="danger" size="large" text @click="open('https://mp.weixin.qq.com/s/yTR0iTDNGcpzQqvbS7DkjQ')">
+            更新了啥
+          </el-button>
+        </div>
+        <div>
+          本系统最好结合配套IDEA插件一起使用，获取最佳使用体验。
+          <el-button type="primary" size="large" text @click="open('https://blog.codingcoder.cn/post/codereviewversions.html')">
+            点此获取
+          </el-button>
+        </div>
+      </div>
+      <el-divider>帮助文档</el-divider>
+      <div style="margin:20px;">
+          <el-button type="success" size="default" plain @click="open('https://blog.codingcoder.cn/post/codereviewserverdeploydoc.html')">
+            使用教程（服务端）
+          </el-button>
+          <el-button type="primary" size="default" plain @click="open('https://blog.codingcoder.cn/post/codereviewhelperdoc.html')">
+            使用教程（插件端）
+          </el-button>
+      </div>
+      <el-divider>源码获取</el-divider>
+      <div style="margin:20px;">
+          本软件服务端与客户端全套代码开源，您可以获取源码进行二次开发定制。获取源码、以及源码介绍，您可以
+          <el-button type="primary" size="large" text @click="open('https://blog.codingcoder.cn/post/codereviewserverdeploydoc.html')">
+            点此获取
+          </el-button>
+      </div>
+      <el-divider>问题反馈&功能建议</el-divider>
+      <div style="margin:20px">
+        <el-alert
+          title="感谢选择使用本软件。功能持续迭代中，如果您在使用中有好的想法、或者对功能有诉求，可以通过下面方式联系开发者反馈。"
+          type="warning"
+          :closable="false"
+        />
+      </div>
+      <div style="margin:20px">
+        <img src="../../../assets/images/contact1.png" style="width: 100%;margin-top:20px">
+      </div>
     </el-drawer>
   </div>
 </template>
