@@ -1,5 +1,12 @@
 # CodeReviewServer服务端配套界面
 
+---
+
+V4.1.1版本正式发布，更新内容： [点击查看](https://mp.weixin.qq.com/s/yTR0iTDNGcpzQqvbS7DkjQ)
+
+---
+
+
 这个是CodeReview检视IDEA插件配套服务端对应的界面源码仓库。
 
 如果您需要获取配套的后端服务源码，从如下途径获取：
