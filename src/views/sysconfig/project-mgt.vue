@@ -162,8 +162,8 @@ export default {
             .post(
               `server/project/saveProjectMembers`,
               {
-                projectId: this.memberEditDetail.projectId,
-                accounts: this.memberEditDetail.userMembers,
+                projectId: (this.memberEditDetail as any).projectId,
+                accounts: (this.memberEditDetail as any).userMembers,
               }
             )
             .then((resp: any) => {
@@ -493,13 +493,13 @@ export default {
         <el-col :span="24">
           <el-form-item label="项目成员">
             <el-select
-              v-model="memberEditDetail.userMembers"
+              v-model="(memberEditDetail as any).userMembers"
               multiple
               placeholder="Select"
               style="width: 800px"
             >
               <el-option
-                v-for="item in this.listUsers"
+                v-for="item in listUsers"
                 :key="(item as any).account"
                 :label="(item as any).name"
                 :value="(item as any).account"

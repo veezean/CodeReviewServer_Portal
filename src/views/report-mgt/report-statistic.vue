@@ -5,7 +5,7 @@ meta:
 
 <script lang="ts">
 import api from "@/api";
-import { defineComponent, onMounted, ref } from "vue";
+import { ref } from "vue";
 import useUserStore from "@/store/modules/user";
 import * as echarts from "echarts";
 
@@ -85,7 +85,7 @@ export default {
       });
     },
 
-    initChart(charRef, charDataModel) {
+    initChart(charRef:any, charDataModel:any) {
       let chart = echarts.init(charRef);
 
       // 配置数据

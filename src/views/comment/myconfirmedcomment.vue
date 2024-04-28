@@ -127,9 +127,9 @@ export default {
       api.post('/server/comment/exportComments', this.search, {responseType:'blob'}).then((res) => {
           let  fileName = "review_comment_" + Date.now() + ".xlsx";
 
-          let blob = new Blob([res]);
+          let blob = new Blob([res as any]);
           if ('msSaveOrOpenBlob' in navigator) {
-            window.navigator.msSaveOrOpenBlob(blob, fileName);
+            (window.navigator as any).msSaveOrOpenBlob(blob, fileName);
           } else {
             let url = window.URL.createObjectURL(blob); // 创建 url 并指向 blob
             let a = document.createElement("a");
