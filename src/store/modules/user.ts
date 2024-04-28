@@ -15,6 +15,7 @@ const useUserStore = defineStore(
     const routeStore = useRouteStore()
     const menuStore = useMenuStore()
 
+    const version = ref(localStorage.version ?? '')
     const account = ref(localStorage.account ?? '')
     const name = ref(localStorage.name ?? '')
     const phoneNumber = ref(localStorage.phoneNumber ?? '')
@@ -46,12 +47,14 @@ const useUserStore = defineStore(
         localStorage.setItem('phoneNumber', res.data.userDetail.phoneNumber)
         localStorage.setItem('token', res.data.token)
         localStorage.setItem('failure_time', res.data.expireAt)
+        localStorage.setItem('version', res.data.version)
 
         account.value = res.data.userDetail.account
         name.value = res.data.userDetail.name
         phoneNumber.value = res.data.userDetail.phoneNumber
         token.value = res.data.token
         failure_time.value = res.data.expireAt
+        version.value = res.data.version
       }
     }
     // 登出
@@ -63,11 +66,13 @@ const useUserStore = defineStore(
         localStorage.removeItem('phoneNumber')
         localStorage.removeItem('token')
         localStorage.removeItem('failure_time')
+        localStorage.removeItem('version')
         account.value = ''
         name.value = ''
         phoneNumber.value = ''
         token.value = ''
         failure_time.value = ''
+        version.value = ''
         routeStore.removeRoutes()
         menuStore.setActived(0)
       }
@@ -114,6 +119,7 @@ const useUserStore = defineStore(
       token,
       permissions,
       isLogin,
+      version,
       login,
       logout,
       getPermissions,

@@ -257,29 +257,29 @@ export default {
       </search-bar>
     </page-main>
 
-    <ElRow :gutter="20" style="margin: -10px 10px">
-      <ElCol :md="12">
-        <PageMain title="评审意见确认结果统计" style="margin: 10px 0">
-          <div ref="confirmResultRef" style="width: 100%; height: 400px" />
-        </PageMain>
-      </ElCol>
-      <ElCol :md="12">
-        <PageMain title="项目维度分布统计" style="margin: 10px 0">
-          <div ref="projectRef" style="width: 100%; height: 400px" />
-        </PageMain>
-      </ElCol>
-    </ElRow>
-    <ElRow :gutter="20" style="margin: -10px 10px">
-      <ElCol :md="12">
-        <PageMain title="检视人员提交记录统计" style="margin: 10px 0">
-          <div ref="reviewerRef" style="width: 100%; height: 400px" />
-        </PageMain>
-      </ElCol>
-      <ElCol :md="12">
-        <PageMain title="实际确认人员提交记录统计" style="margin: 10px 0">
-          <div ref="realConfirmerRef" style="width: 100%; height: 400px" />
-        </PageMain>
-      </ElCol>
-    </ElRow>
+    <page-main>
+      <ElRow :gutter="20" style="margin: -10px 10px">
+        <ElCol :md="6">
+          <PageMain title="评审意见确认结果统计" style="margin: 10px 0">
+            <div ref="confirmResultRef" style="width: 100%; height: 320px" />
+          </PageMain>
+        </ElCol>
+        <ElCol :md="6">
+          <PageMain title="项目维度分布统计" style="margin: 10px 0">
+            <div ref="projectRef" style="width: 100%; height: 320px" />
+          </PageMain>
+        </ElCol>
+        <ElCol :md="6">
+          <PageMain title="检视人员提交记录统计" style="margin: 10px 0">
+            <div ref="reviewerRef" style="width: 100%; height: 320px" />
+          </PageMain>
+        </ElCol>
+        <ElCol :md="6">
+          <PageMain title="实际确认人员提交记录统计" style="margin: 10px 0">
+            <div ref="realConfirmerRef" style="width: 100%; height: 320px" />
+          </PageMain>
+        </ElCol>
+      </ElRow>
+    </page-main>
   </div>
 </template>

@@ -3,5 +3,10 @@
     "source.fixAll.eslint": "explicit",
     "source.fixAll.stylelint": "explicit"
   },
-  "stylelint.validate": ["css", "scss", "vue"]
+  "stylelint.validate": [
+    "css",
+    "scss",
+    "vue"
+  ],
+  "vue3snippets.enable-compile-vue-file-on-did-save-code": false
 }

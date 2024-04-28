@@ -4,187 +4,308 @@ meta:
   title: 主页
 </route>
 
-<script lang="ts" setup>
-function open(url: string) {
-  window.open(url, '_blank')
-}
+<script lang="ts">
+import { ArrowRight, CaretBottom, CaretTop, Warning } from "@element-plus/icons-vue";
 
-const fantasticAdminInfo = ref({
-  imageVisible: false,
-  index: 0,
-  data: [
-    'https://hooray.gitee.io/fantastic-admin/preview1.png',
-    'https://hooray.gitee.io/fantastic-admin/preview2.png',
-    'https://hooray.gitee.io/fantastic-admin/preview3.png',
-    'https://hooray.gitee.io/fantastic-admin/preview4.png',
-    'https://hooray.gitee.io/fantastic-admin/preview5.png',
-    'https://hooray.gitee.io/fantastic-admin/preview6.png',
-  ],
-})
+import api from "@/api";
+import { defineComponent, onMounted, ref } from "vue";
+import * as echarts from "echarts";
 
-const oneStepAdminInfo = ref({
-  imageVisible: false,
-  index: 0,
-  data: [
-    'https://hooray.gitee.io/one-step-admin/preview1.png',
-    'https://hooray.gitee.io/one-step-admin/preview2.png',
-    'https://hooray.gitee.io/one-step-admin/preview3.png',
-    'https://hooray.gitee.io/one-step-admin/preview4.png',
-    'https://hooray.gitee.io/one-step-admin/preview5.png',
-    'https://hooray.gitee.io/one-step-admin/preview6.png',
-  ],
-})
+
+const confirmResultRef = ref();
+const projectRef = ref();
+const reviewerRef = ref();
+const realConfirmerRef = ref();
+
+export default {
+  data() {
+    return {
+      search: {},
+      statData: {},
+      departmentTree: {},
+      listProjects: [],
+      listUsers: [],
+      confirmResultItems: [],
+      countData:{},
+    };
+  },
+  computed: {},
+  mounted() {
+    this.clickSearch();
+  },
+  methods: {
+    clickSearch() {
+      api.get("/server/stat/homestat").then((res) => {
+        this.countData = res.data;
+      });
+
+      api.post("/server/stat/query", this.search).then((res) => {
+        this.statData = res.data;
+
+        this.initChart(this.$refs.confirmResultRef as any, (this.statData as any).confirmResultChartModel);
+        this.initChart(this.$refs.projectRef as any, (this.statData as any).projectChartModel);
+        this.initChart(this.$refs.reviewerRef as any, (this.statData as any).reviewerChartModel);
+        this.initChart(this.$refs.realConfirmerRef as any, (this.statData as any).realConfirmerChartModel);
+      });
+    },
+
+    initChart(charRef:any, charDataModel:any) {
+      let chart = echarts.init(charRef);
+
+      // 配置数据
+      const option = {
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            // 坐标轴指示器，坐标轴触发有效
+            type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+          },
+        },
+        legend: {
+          data: [],
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
+        },
+        xAxis: [
+          {
+            type: "category",
+            data: charDataModel.xaxisData,
+          },
+        ],
+        yAxis: [
+          {
+            type: "value",
+          },
+        ],
+        series: [
+          {
+            type: "bar",
+            data: charDataModel.seriesData,
+          },
+        ],
+      };
+      // 传入数据
+      chart.setOption(option);
+    },
+  },
+};
 </script>
 
 <template>
   <div>
     <page-header title="欢迎使用CodeReview管理系统">
       <template #content>
-        <div>
-          <div style="margin-bottom: 5px;">
-            这是IDEA插件<b class="text-emphasis">CodeReviewHelper</b>配套的服务端管理系统，它可以用于团队协作时的代码检视场景。支持管理检视意见、检视意见确认、数据统计、用户管理、系统配置等功能。
-          </div>
-        </div>
+        <div></div>
       </template>
-      <el-button-group>
-        <el-button type="success" size="large" plain @click="open('https://blog.codingcoder.cn/post/codereviewserverdeploydoc.html')">
-          帮助文档
-        </el-button>
-        <el-dropdown>
-          <el-button type="primary" size="large">
-            源码获取
-            <el-icon class="el-icon--right">
-              <svg-icon name="ep:arrow-down" />
-            </el-icon>
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item @click="open('https://github.com/veezean/IntellijIDEA-CodeReview-Plugin')">
-                IDEA插件
-              </el-dropdown-item>
-              <el-dropdown-item @click="open('https://github.com/veezean/CodeReviewServer')">
-                Server后端
-              </el-dropdown-item>
-              <el-dropdown-item @click="open('https://github.com/veezean/CodeReviewServer_Portal')">
-                Server前端
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </el-button-group>
     </page-header>
-    <el-row :gutter="20" style="margin: 0 10px;">
-      <el-col>
-        <page-main style="margin: 0;">
-          <div class="ecology vue">
-            <div class="main">
-              <img src="../assets/images/plugin.png" style="width: 50%;">
-              <h1>配套CodeReview IDEA插件</h1>
-              <h2>支持在IDEA中进行便捷的代码review与意见记录、结合服务端实现便捷的团队代码检视协作。</h2>
-              <div>
-                <el-button type="primary" plain @click="open('https://blog.codingcoder.cn/post/codereviewhelperdoc.html')">
-                  <template #icon>
-                    <el-icon>
-                      <svg-icon name="ep:link" />
-                    </el-icon>
+    <el-row>
+      <el-col :span="12">
+        <page-main title="我的数据">
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <div class="statistic-card">
+                <el-statistic :value="(countData as any).waitingMeConfirm" suffix="条">
+                  <template #title>
+                    <div style="display: inline-flex; align-items: center">
+                      待我确认
+                      <el-tooltip
+                        effect="dark"
+                        content="等待您确认处理的评审意见数"
+                        placement="top"
+                      >
+                        <el-icon style="margin-left: 4px" :size="16">
+                          <Warning />
+                        </el-icon>
+                      </el-tooltip>
+                    </div>
                   </template>
-                  使用教程
-                </el-button>
-                <el-button plain @click="open('https://blog.codingcoder.cn/post/codereviewversions.html')">
-                  <template #icon>
-                    <el-icon>
-                      <svg-icon name="ep:link" />
-                    </el-icon>
-                  </template>
-                  插件获取
-                </el-button>
+                </el-statistic>
               </div>
-            </div>
-          </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="statistic-card">
+                <el-statistic :value="(countData as any).myCommitted" suffix="条">
+                  <template #title>
+                    <div style="display: inline-flex; align-items: center">
+                      我提交的
+                      <el-tooltip
+                        effect="dark"
+                        content="统计由您提交的评审意见总条数"
+                        placement="top"
+                      >
+                        <el-icon style="margin-left: 4px" :size="16">
+                          <Warning />
+                        </el-icon>
+                      </el-tooltip>
+                    </div>
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="statistic-card">
+                <el-statistic :value="(countData as any).myConfirmed" suffix="条">
+                  <template #title>
+                    <div style="display: inline-flex; align-items: center">
+                      我确认的
+                      <el-tooltip
+                        effect="dark"
+                        content="统计由您执行确认操作的评审意见总条数"
+                        placement="top"
+                      >
+                        <el-icon style="margin-left: 4px" :size="16">
+                          <Warning />
+                        </el-icon>
+                      </el-tooltip>
+                    </div>
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+          </el-row>
         </page-main>
       </el-col>
-
+      <el-col :span="12">
+        <page-main title="系统数据">
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <div class="statistic-card">
+                <el-statistic :value="(countData as any).allComments" suffix="条">
+                  <template #title>
+                    <div style="display: inline-flex; align-items: center">
+                      全部意见
+                      <el-tooltip
+                        effect="dark"
+                        content="系统已有的全部评审意见数"
+                        placement="top"
+                      >
+                        <el-icon style="margin-left: 4px" :size="16">
+                          <Warning />
+                        </el-icon>
+                      </el-tooltip>
+                    </div>
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="statistic-card">
+                <el-statistic :value="(countData as any).waitingConfirm" suffix="条">
+                  <template #title>
+                    <div style="display: inline-flex; align-items: center">
+                      等待确认
+                      <el-tooltip
+                        effect="dark"
+                        content="系统内当前全部待确认评审意见数"
+                        placement="top"
+                      >
+                        <el-icon style="margin-left: 4px" :size="16">
+                          <Warning />
+                        </el-icon>
+                      </el-tooltip>
+                    </div>
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="statistic-card">
+                <el-statistic :value="(countData as any).totalProjects" suffix="个">
+                  <template #title>
+                    <div style="display: inline-flex; align-items: center">
+                      项目总数
+                      <el-tooltip
+                        effect="dark"
+                        content="统计当前系统内的所有项目个数"
+                        placement="top"
+                      >
+                        <el-icon style="margin-left: 4px" :size="16">
+                          <Warning />
+                        </el-icon>
+                      </el-tooltip>
+                    </div>
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+          </el-row>
+        </page-main>
+      </el-col>
     </el-row>
+
+    <page-main>
+      <ElRow :gutter="20" style="margin: -10px 10px">
+        <ElCol :md="6">
+          <PageMain title="评审意见确认结果统计" style="margin: 10px 0">
+            <div ref="confirmResultRef" style="width: 100%; height: 320px" />
+          </PageMain>
+        </ElCol>
+        <ElCol :md="6">
+          <PageMain title="项目维度分布统计" style="margin: 10px 0">
+            <div ref="projectRef" style="width: 100%; height: 320px" />
+          </PageMain>
+        </ElCol>
+        <ElCol :md="6">
+          <PageMain title="检视人员提交记录统计" style="margin: 10px 0">
+            <div ref="reviewerRef" style="width: 100%; height: 320px" />
+          </PageMain>
+        </ElCol>
+        <ElCol :md="6">
+          <PageMain title="实际确认人员提交记录统计" style="margin: 10px 0">
+            <div ref="realConfirmerRef" style="width: 100%; height: 320px" />
+          </PageMain>
+        </ElCol>
+      </ElRow>
+    </page-main>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.text-emphasis {
-  text-emphasis-style: "❤";
+:global(h2#card-usage ~ .example .example-showcase) {
+  background-color: var(--el-fill-color) !important;
 }
 
-.ecology {
-  padding: 10px 0 0;
-
-  &.vue {
-    h1 {
-      color: #41b883;
-    }
-  }
-
-  &.fa {
-    h1 {
-      color: #e60000;
-    }
-  }
-
-  &.osa {
-    h1 {
-      color: #67c23a;
-    }
-  }
-
-  .main {
-    text-align: center;
-
-    img {
-      display: block;
-      margin: 0 auto;
-    }
-
-    h1 {
-      margin: 10px auto 0;
-      text-align: center;
-    }
-
-    h2 {
-      font-size: 16px;
-      font-weight: normal;
-      color: var(--el-text-color-secondary);
-      text-align: center;
-    }
-  }
-
-  .el-carousel {
-    box-shadow: var(--el-box-shadow-light);
-    transition: var(--el-transition-box-shadow);
-  }
-
-  ul li {
-    line-height: 28px;
-  }
+.el-statistic {
+  --el-statistic-content-font-size: 28px;
 }
 
-.question {
-  .answer {
-    margin: 20px 0 0;
-    padding-left: 20px;
-    font-size: 16px;
-    color: var(--el-text-color-secondary);
+.statistic-card {
+  height: 100%;
+  padding: 20px;
+  border-radius: 4px;
+  background-color: #d0e2ff;
+}
 
-    li {
-      margin-bottom: 10px;
-      line-height: 1.5;
+.statistic-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--el-text-color-regular);
+  margin-top: 16px;
+}
 
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
+.statistic-footer .footer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    span {
-      color: var(--el-text-color-primary);
-      font-weight: bold;
-    }
-  }
+.statistic-footer .footer-item span:last-child {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.green {
+  color: var(--el-color-success);
+}
+.red {
+  color: var(--el-color-error);
 }
 </style>
