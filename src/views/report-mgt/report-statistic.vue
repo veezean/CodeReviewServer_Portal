@@ -40,10 +40,22 @@ export default {
       api.post("/server/stat/query", this.search).then((res) => {
         this.statData = res.data;
 
-        this.initChart(this.$refs.confirmResultRef as any, (this.statData as any).confirmResultChartModel);
-        this.initChart(this.$refs.projectRef as any, (this.statData as any).projectChartModel);
-        this.initChart(this.$refs.reviewerRef as any, (this.statData as any).reviewerChartModel);
-        this.initChart(this.$refs.realConfirmerRef as any, (this.statData as any).realConfirmerChartModel);
+        this.initChart(
+          this.$refs.confirmResultRef as any,
+          (this.statData as any).confirmResultChartModel
+        );
+        this.initChart(
+          this.$refs.projectRef as any,
+          (this.statData as any).projectChartModel
+        );
+        this.initChart(
+          this.$refs.reviewerRef as any,
+          (this.statData as any).reviewerChartModel
+        );
+        this.initChart(
+          this.$refs.realConfirmerRef as any,
+          (this.statData as any).realConfirmerChartModel
+        );
       });
     },
     resetSearch() {
@@ -85,7 +97,7 @@ export default {
       });
     },
 
-    initChart(charRef:any, charDataModel:any) {
+    initChart(charRef: any, charDataModel: any) {
       let chart = echarts.init(charRef);
 
       // 配置数据

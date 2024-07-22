@@ -44,6 +44,9 @@ function handleCopy() {
 function open(url: string) {
   window.open(url, '_blank')
 }
+function openVersionDescUrl() {
+  window.open(userStore.versionDescUrl, '_blank')
+}
 </script>
 
 <template>
@@ -60,7 +63,7 @@ function open(url: string) {
       <div style="margin-left:20px;">
         <div>
           服务端版本：{{ userStore.version }}
-          <el-button type="danger" size="large" text @click="open('https://mp.weixin.qq.com/s/yTR0iTDNGcpzQqvbS7DkjQ')">
+          <el-button type="danger" size="large" text @click="openVersionDescUrl()">
             更新了啥
           </el-button>
         </div>
