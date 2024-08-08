@@ -16,6 +16,7 @@ const useUserStore = defineStore(
     const menuStore = useMenuStore()
 
     const version = ref(localStorage.version ?? '')
+    const versionDescUrl = ref(localStorage.versionDescUrl ?? '')
     const account = ref(localStorage.account ?? '')
     const name = ref(localStorage.name ?? '')
     const phoneNumber = ref(localStorage.phoneNumber ?? '')
@@ -48,6 +49,7 @@ const useUserStore = defineStore(
         localStorage.setItem('token', res.data.token)
         localStorage.setItem('failure_time', res.data.expireAt)
         localStorage.setItem('version', res.data.version)
+        localStorage.setItem('versionDescUrl', res.data.versionDescUrl)
 
         account.value = res.data.userDetail.account
         name.value = res.data.userDetail.name
@@ -55,6 +57,7 @@ const useUserStore = defineStore(
         token.value = res.data.token
         failure_time.value = res.data.expireAt
         version.value = res.data.version
+        versionDescUrl.value = res.data.versionDescUrl
       }
     }
     // 登出
@@ -67,12 +70,14 @@ const useUserStore = defineStore(
         localStorage.removeItem('token')
         localStorage.removeItem('failure_time')
         localStorage.removeItem('version')
+        localStorage.removeItem('versionDescUrl')
         account.value = ''
         name.value = ''
         phoneNumber.value = ''
         token.value = ''
         failure_time.value = ''
         version.value = ''
+        versionDescUrl.value = ''
         routeStore.removeRoutes()
         menuStore.setActived(0)
       }
@@ -120,6 +125,7 @@ const useUserStore = defineStore(
       permissions,
       isLogin,
       version,
+      versionDescUrl,
       login,
       logout,
       getPermissions,
